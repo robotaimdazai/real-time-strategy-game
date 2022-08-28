@@ -6,10 +6,14 @@ using UnityEngine;
 public class UnitManager : MonoBehaviour
 {
     public GameObject selectionCircle;
+    
+    protected BoxCollider _collider;
+    public virtual Unit Unit { get; set; }
+    
     private Transform _canvas;
     private GameObject _healthbar;
-    protected BoxCollider _collider;
-    protected virtual Unit Unit { get; set; }
+   
+    
 
     private void Awake()
     {
@@ -81,6 +85,7 @@ public class UnitManager : MonoBehaviour
             h.Initialize(transform,rect.height);
             h.SetPosition();
         }
+        EventManager.TriggerCustomEvent("SelectUnit", new CustomEventData(Unit));
     }
     
     public void Select()
@@ -95,5 +100,6 @@ public class UnitManager : MonoBehaviour
         selectionCircle.SetActive(false);
         Destroy(_healthbar);
         _healthbar = null;
+        EventManager.TriggerCustomEvent("DeselectUnit", new CustomEventData(Unit));
     }
 }
