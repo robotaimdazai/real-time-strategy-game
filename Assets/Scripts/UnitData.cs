@@ -11,6 +11,7 @@ public class UnitData : ScriptableObject
         public int healthpoints;
         public GameObject prefab;
         public List<ResourceValue> cost;
+        public List<SkillData> skills = new List<SkillData>();
         
         public bool CanBuy()
         {

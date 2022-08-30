@@ -10,6 +10,7 @@ public class Unit
     protected string _uid;
     protected int _level;
     protected List<ResourceValue> _production;
+    protected List<SkillManager> _skillManagers;
     
     public string Uid { get => _uid; }
     public int Level { get => _level; }
@@ -19,18 +20,28 @@ public class Unit
     public Transform Transform { get => _transform; }
     public int HP { get => _currentHealth; set => _currentHealth = value; }
     public int MaxHP { get => _data.healthpoints; }
+    public List<SkillManager> SkillManagers { get => _skillManagers; }
 
 
     public Unit(UnitData data) : this(data, new List<ResourceValue>() { })
+    {
+    }
+    public Unit(UnitData data, List<ResourceValue> production)
     {
         _data = data;
         _currentHealth = data.healthpoints;
 
         GameObject g = GameObject.Instantiate(data.prefab) as GameObject;
         _transform = g.transform;
-    }
-    public Unit(UnitData data, List<ResourceValue> production)
-    {
+        
+        _skillManagers = new List<SkillManager>();
+        SkillManager sm;
+        foreach (SkillData skill in _data.skills)
+        {
+            sm = g.AddComponent<SkillManager>();
+            sm.Initialize(skill, g);
+            _skillManagers.Add(sm);
+        }
         _uid = System.Guid.NewGuid().ToString();
         _level = 1;
         _production = production;
@@ -43,11 +54,8 @@ public class Unit
 
     public virtual void Place()
     {
-        // remove "is trigger" flag from box collider to allow
-        // for collisions with units
+        
         _transform.GetComponent<BoxCollider>().isTrigger = false;
-        // update game resources: remove the cost of the building
-        // from each game resource
         foreach (ResourceValue resource in _data.cost)
         {
             Globals.GAME_RESOURCES[resource.code].AddAmount(-resource.amount);
@@ -64,6 +72,12 @@ public class Unit
         foreach (ResourceValue resource in _production)
             Globals.GAME_RESOURCES[resource.code].AddAmount(resource.amount);
     }
+    
+    public void TriggerSkill(int index, GameObject target = null)
+    {
+        _skillManagers[index].Trigger(target);
+    }
+    
 
     
 }

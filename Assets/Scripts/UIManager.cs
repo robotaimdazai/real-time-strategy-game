@@ -18,7 +18,9 @@ public class UIManager : MonoBehaviour
     public GameObject selectedUnitDisplayPrefab;
     public Transform selectionGroupsParent;
     public GameObject selectedUnitMenu;
+    public GameObject unitSkillButtonPrefab;
     
+    private Unit _selectedUnit;
     private RectTransform _selectedUnitContentRectTransform;
     private TextMeshProUGUI _selectedUnitTitleText;
     private TextMeshProUGUI _selectedUnitLevelText;
@@ -262,10 +264,35 @@ public class UIManager : MonoBehaviour
                 t.Find("Icon").GetComponent<Image>().sprite = Resources.Load<Sprite>($"Textures/GameResources/{resource.code}");
             }
         }
+        
+        _selectedUnit = unit;
+        // ...
+        // clear skills and reinstantiate new ones
+        foreach (Transform child in _selectedUnitActionButtonsParent)
+            Destroy(child.gameObject);
+        if (unit.SkillManagers.Count > 0)
+        {
+            GameObject g; Transform t; Button b;
+            for (int i = 0; i < unit.SkillManagers.Count; i++)
+            {
+                g = GameObject.Instantiate(
+                    unitSkillButtonPrefab, _selectedUnitActionButtonsParent);
+                t = g.transform;
+                b = g.GetComponent<Button>();
+                unit.SkillManagers[i].SetButton(b);
+                t.Find("Text").GetComponent<TextMeshProUGUI>().text =
+                    unit.SkillManagers[i].skill.skillName;
+                _AddUnitSkillButtonListener(b, i);
+            }
+        }
     }
     
     private void _ShowSelectedUnitMenu(bool show)
     {
         selectedUnitMenu.SetActive(show);
+    }
+    private void _AddUnitSkillButtonListener(Button b, int i)
+    {
+        b.onClick.AddListener(() => _selectedUnit.TriggerSkill(i));
     }
 }

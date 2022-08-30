@@ -1606,6 +1606,7 @@ MonoBehaviour:
   selectedUnitDisplayPrefab: {fileID: 9210925516007103873, guid: 6f3745759b6872248ba625e2a970299c, type: 3}
   selectionGroupsParent: {fileID: 2022749993}
   selectedUnitMenu: {fileID: 1407543870}
+  unitSkillButtonPrefab: {fileID: 6199697141651181013, guid: f047de3c52433f34abe4509c2a41625e, type: 3}
 --- !u!4 &853173694
 Transform:
   m_ObjectHideFlags: 0
@@ -2838,6 +2839,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1304134680}
   - component: {fileID: 1304134682}
+  - component: {fileID: 1304134683}
   m_Layer: 5
   m_Name: SpecificActions
   m_TagString: Untagged
@@ -2873,6 +2875,32 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1304134679}
   m_CullTransparentMesh: 1
+--- !u!114 &1304134683
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1304134679}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59f8146938fff824cb5fd77236b75775, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Padding:
+    m_Left: 0
+    m_Right: 0
+    m_Top: 0
+    m_Bottom: 0
+  m_ChildAlignment: 0
+  m_Spacing: 0
+  m_ChildForceExpandWidth: 1
+  m_ChildForceExpandHeight: 0
+  m_ChildControlWidth: 1
+  m_ChildControlHeight: 0
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
+  m_ReverseArrangement: 0
 --- !u!1 &1339750075
 GameObject:
   m_ObjectHideFlags: 0
