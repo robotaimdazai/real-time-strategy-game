@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
@@ -37,17 +38,17 @@ public class UIManager : MonoBehaviour
     {
         EventManager.AddListener("UpdateResourceTexts",UpdateResourceTexts);
         EventManager.AddListener("CheckBuildingButtons",CheckBuildingButtons);
-        EventManager.AddCustomListener("HoverBuildingButton",OnHoverBuildingButton);
+        EventManager.AddListener((string)"HoverBuildingButton",(UnityAction<object>)OnHoverBuildingButton);
         EventManager.AddListener("UnhoverBuildingButton",OnUnHoverBuildingButton);
-        EventManager.AddCustomListener("SelectUnit", _OnSelectUnit);
-        EventManager.AddCustomListener("DeselectUnit", _OnDeselectUnit);
+        EventManager.AddListener((string)"SelectUnit", (UnityAction<object>)_OnSelectUnit);
+        EventManager.AddListener((string)"DeselectUnit", (UnityAction<object>)_OnDeselectUnit);
     }
     
     private void OnDisable()
     {
         EventManager.RemoveListener("UpdateResourceTexts",UpdateResourceTexts);
         EventManager.RemoveListener("CheckBuildingButtons",CheckBuildingButtons);
-        EventManager.RemoveCustomListener("HoverBuildingButton",OnHoverBuildingButton);
+        EventManager.RemoveListener((string)"HoverBuildingButton",(UnityAction<object>)OnHoverBuildingButton);
         EventManager.RemoveListener("UnhoverBuildingButton",OnUnHoverBuildingButton);
     }
 
@@ -126,9 +127,10 @@ public class UIManager : MonoBehaviour
         b.onClick.AddListener(() => _buildingPlacer.SelectPlacedBuilding(i));
     }
 
-    private void OnHoverBuildingButton(CustomEventData customEventData)
+    private void OnHoverBuildingButton(object data)
     {
-        SetInfoPanel(customEventData.unitData);
+        
+        SetInfoPanel((UnitData)data);
         ShowInfoPanel(true);
     }
     private void OnUnHoverBuildingButton()
@@ -136,16 +138,17 @@ public class UIManager : MonoBehaviour
         ShowInfoPanel(false);
     }
     
-    private void _OnSelectUnit(CustomEventData data)
+    private void _OnSelectUnit(object data)
     {
-        _AddSelectedUnitToUIList(data.unit);
-        _SetSelectedUnitMenu(data.unit);
+        _AddSelectedUnitToUIList((Unit)data);
+        _SetSelectedUnitMenu((Unit)data);
         _ShowSelectedUnitMenu(true);
     }
 
-    private void _OnDeselectUnit(CustomEventData data)
+    private void _OnDeselectUnit(object data)
     {
-        _RemoveSelectedUnitFromUIList(data.unit.Code);
+        var unitData = data as Unit;
+        _RemoveSelectedUnitFromUIList(unitData.Code);
         if (Globals.SELECTED_UNITS.Count == 0)
             _ShowSelectedUnitMenu(false);
         else

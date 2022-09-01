@@ -3,6 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
+
+public class CustomEvent : UnityEvent<object>
+{
+    
+}
 public class EventManager : MonoBehaviour
 {
        private  Dictionary<string, UnityEvent> _events;
@@ -49,7 +54,7 @@ public class EventManager : MonoBehaviour
                      Instance._events.Add(id,unityEvent);
               }
        }
-       public static void AddCustomListener(string id, UnityAction<CustomEventData> listener)
+       public static void AddListener(string id, UnityAction<object> listener)
        {
               CustomEvent unityEvent = null;
               if (Instance._customEvents.TryGetValue(id, out unityEvent))
@@ -75,7 +80,7 @@ public class EventManager : MonoBehaviour
                      Debug.LogError("Listener not found");
               }
        }
-       public static void RemoveCustomListener(string id, UnityAction<CustomEventData> listener)
+       public static void RemoveListener(string id, UnityAction<object> listener)
        {
               if (Instance._customEvents.TryGetValue(id, out var unityEvent))
               {
@@ -94,7 +99,7 @@ public class EventManager : MonoBehaviour
                      unityEvent.Invoke();
               }
        }
-       public static void TriggerCustomEvent(string id, CustomEventData data)
+       public static void TriggerEvent(string id, object data)
        {
               if (Instance._customEvents.TryGetValue(id, out var unityEvent))
               {

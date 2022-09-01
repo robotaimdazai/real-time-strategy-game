@@ -85,7 +85,7 @@ public class UnitManager : MonoBehaviour
             h.Initialize(transform,rect.height);
             h.SetPosition();
         }
-        EventManager.TriggerCustomEvent("SelectUnit", new CustomEventData(Unit));
+        EventManager.TriggerEvent("SelectUnit", Unit);
     }
     
     public void Select()
@@ -100,6 +100,6 @@ public class UnitManager : MonoBehaviour
         selectionCircle.SetActive(false);
         Destroy(_healthbar);
         _healthbar = null;
-        EventManager.TriggerCustomEvent("DeselectUnit", new CustomEventData(Unit));
+        EventManager.TriggerEvent("DeselectUnit", Unit);
     }
 }
