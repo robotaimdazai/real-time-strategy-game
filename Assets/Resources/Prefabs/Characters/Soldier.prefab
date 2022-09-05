@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 3419882057146081501}
   - component: {fileID: 3419882057146081503}
   - component: {fileID: 3419882057146081502}
+  - component: {fileID: 7344892030083253396}
   - component: {fileID: 175506567113529368}
   m_Layer: 0
   m_Name: Soldier
@@ -65,6 +66,28 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.3, y: 1, z: 0.3}
   m_Center: {x: 0, y: 0.5, z: 0}
+--- !u!195 &7344892030083253396
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3419882057146081500}
+  m_Enabled: 1
+  m_AgentTypeID: 0
+  m_Radius: 0.5
+  m_Speed: 6
+  m_Acceleration: 4
+  avoidancePriority: 50
+  m_AngularSpeed: 90
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 2
+  m_BaseOffset: 0
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
 --- !u!114 &175506567113529368
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -78,6 +101,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   selectionCircle: {fileID: 3419882058657059322}
+  agent: {fileID: 7344892030083253396}
 --- !u!1 &3419882058657059322
 GameObject:
   m_ObjectHideFlags: 0

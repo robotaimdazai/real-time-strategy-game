@@ -33,8 +33,9 @@ public class SkillData : ScriptableObject
                 );
                 CharacterData d = (CharacterData) unitReference;
                 Character c = new Character(d);
-                c.Transform.position = instantiationPosition;
-                c.Transform.GetComponent<CharacterManager>().Initialize(c);
+                var characterManager = c.Transform.GetComponent<CharacterManager>();
+                characterManager.Initialize(c);
+                characterManager.agent.Warp(instantiationPosition);
             }
                 break;
             default:
