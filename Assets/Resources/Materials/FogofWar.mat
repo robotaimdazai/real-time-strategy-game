@@ -85,7 +85,7 @@ Material:
     - _Parallax: 0.02
     - _PulseIfLow: 1
     - _Ratio: 8
-    - _SemiOpacity: 0.85
+    - _SemiOpacity: 0.7
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1

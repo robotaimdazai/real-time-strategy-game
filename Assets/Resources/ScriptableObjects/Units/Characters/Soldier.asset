@@ -16,7 +16,7 @@ MonoBehaviour:
   unitName: Soldier
   description: A noob soldier
   healthpoints: 100
-  fieldOfView: 2
+  fieldOfView: 5
   prefab: {fileID: 3419882057146081500, guid: 75ef3c18f8cbff548908299ee18c940c, type: 3}
   cost:
   - code: gold

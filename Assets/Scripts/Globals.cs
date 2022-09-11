@@ -5,6 +5,7 @@ using UnityEngine;
 public class Globals
 {
     public static int TERRAIN_LAYER_MASK = 1 << 6;
+    public static int FLAT_TERRAIN_LAYER_MASK = 1 << 8;
 
     public static BuildingData[] BUILDING_DATA;
     

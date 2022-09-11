@@ -15,3 +15,5 @@ MonoBehaviour:
   enableDayAndNightCycle: 1
   dayLengthInSeconds: 20
   dayInitialRatio: 1
+  initialBuilding: {fileID: 11400000, guid: ac6e7b9335ff963478060f9459179621, type: 2}
+  enableFOV: 1

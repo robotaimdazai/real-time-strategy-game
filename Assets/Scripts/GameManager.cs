@@ -18,7 +18,12 @@ public class GameManager : MonoBehaviour
         GetComponent<DayNightCycler>().enabled = gameParameters.enableDayAndNightCycle;
         _GetStartPosition();
     }
-    
+
+    private void Start()
+    {
+        GameObject.Find("FogOfWar").SetActive(gameParameters.enableFOV);
+    }
+
     private void Update()
     {
         _CheckUnitsNavigation();
