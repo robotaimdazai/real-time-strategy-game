@@ -6,6 +6,7 @@ using UnityEngine;
 public class UnitManager : MonoBehaviour
 {
     public GameObject selectionCircle;
+    public GameObject fov;
     
     protected BoxCollider _collider;
     public virtual Unit Unit { get; set; }
@@ -37,6 +38,10 @@ public class UnitManager : MonoBehaviour
     protected virtual bool IsActive()
     {
         return true;
+    }
+    public void EnableFOV()
+    {
+        fov.SetActive(true);
     }
 
     public void Select(bool singleClick, bool holdingShift)

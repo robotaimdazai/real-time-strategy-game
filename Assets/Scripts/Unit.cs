@@ -45,6 +45,7 @@ public class Unit
         _uid = System.Guid.NewGuid().ToString();
         _level = 1;
         _production = production;
+        _transform.Find("fov").transform.localScale = new Vector3(data.fieldOfView, data.fieldOfView, 0f);
     }
 
     public void SetPosition(Vector3 position)
@@ -60,6 +61,7 @@ public class Unit
         {
             Globals.GAME_RESOURCES[resource.code].AddAmount(-resource.amount);
         }
+        _transform.GetComponent<UnitManager>().EnableFOV();
     }
 
     public bool CanBuy()

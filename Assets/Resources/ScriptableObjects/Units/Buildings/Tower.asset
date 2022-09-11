@@ -16,6 +16,7 @@ MonoBehaviour:
   unitName: Tower
   description: High like your mom
   healthpoints: 100
+  fieldOfView: 15
   prefab: {fileID: 6933451179257593799, guid: 5a0af71bbcf34364bb32a946c7fdfea9, type: 3}
   cost:
   - code: gold
@@ -24,3 +25,4 @@ MonoBehaviour:
     amount: 80
   - code: stone
     amount: 100
+  skills: []

@@ -9,6 +9,7 @@ public class UnitData : ScriptableObject
         public string unitName;
         public string description;
         public int healthpoints;
+        public float fieldOfView;
         public GameObject prefab;
         public List<ResourceValue> cost;
         public List<SkillData> skills = new List<SkillData>();

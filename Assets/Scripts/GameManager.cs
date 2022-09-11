@@ -5,20 +5,28 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+    public static GameManager instance;
+    public Vector3 startPosition;
+    public GameParameters gameParameters;
     
     private Ray _ray;
     private RaycastHit _raycastHit;
-    
-    public GameParameters gameParameters;
     private void Awake()
     {
         DataHandler.LoadGameData();
+        instance = this;
         GetComponent<DayNightCycler>().enabled = gameParameters.enableDayAndNightCycle;
+        _GetStartPosition();
     }
-
+    
     private void Update()
     {
         _CheckUnitsNavigation();
+    }
+    
+    private void _GetStartPosition()
+    {
+        startPosition = Utils.MiddleOfScreenPointToWorld();
     }
 
     private void _CheckUnitsNavigation()

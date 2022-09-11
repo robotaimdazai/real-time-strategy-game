@@ -16,6 +16,7 @@ MonoBehaviour:
   unitName: House
   description: A place to sleep
   healthpoints: 100
+  fieldOfView: 15
   prefab: {fileID: 6933451179257593799, guid: 6f1b0902852b2c24d9b7eef363c08adb, type: 3}
   cost:
   - code: gold

@@ -10,7 +10,19 @@ public class BuildingPlacer : MonoBehaviour
     private Ray _ray;
     private RaycastHit _raycastHit;
     private Vector3 _lastPlacementPosition;
-    
+
+    private void Start()
+    {
+        _placedBuilding = new Building(Globals.BUILDING_DATA[0]);
+        _placedBuilding.SetPosition(GameManager.instance.startPosition);
+        // link the data into the manager
+        _placedBuilding.Transform.GetComponent<BuildingManager>().Initialize(_placedBuilding);
+        _PlaceBuilding();
+        // make sure we have no building selected when the player starts
+        // to play
+        _CancelPlacedBuilding();
+    }
+
     void Update()
     {
         if (_placedBuilding != null)

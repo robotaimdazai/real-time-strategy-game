@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: GameParameters
   m_EditorClassIdentifier: 
   enableDayAndNightCycle: 1
-  dayLengthInSeconds: 3600
-  dayInitialRatio: 0
+  dayLengthInSeconds: 20
+  dayInitialRatio: 1
