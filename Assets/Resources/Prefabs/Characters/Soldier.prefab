@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 3419882057146081502}
   - component: {fileID: 7344892030083253396}
   - component: {fileID: 175506567113529368}
+  - component: {fileID: 7954497506769912653}
   m_Layer: 0
   m_Name: Soldier
   m_TagString: Unit
@@ -104,6 +105,20 @@ MonoBehaviour:
   selectionCircle: {fileID: 3419882058657059322}
   fov: {fileID: 6562304976215315663}
   agent: {fileID: 7344892030083253396}
+--- !u!114 &7954497506769912653
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3419882057146081500}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac9c6917d5ac84041b2644c8c66a1733, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  myRenderer: {fileID: 3419882058793566922}
+  threshold: 0.1
 --- !u!1 &3419882058657059322
 GameObject:
   m_ObjectHideFlags: 0

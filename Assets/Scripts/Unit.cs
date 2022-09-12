@@ -11,6 +11,7 @@ public class Unit
     protected int _level;
     protected List<ResourceValue> _production;
     protected List<SkillManager> _skillManagers;
+    protected float _fieldOfView;
     
     public string Uid { get => _uid; }
     public int Level { get => _level; }
@@ -20,6 +21,7 @@ public class Unit
     public Transform Transform { get => _transform; }
     public int HP { get => _currentHealth; set => _currentHealth = value; }
     public int MaxHP { get => _data.healthpoints; }
+    public float FieldOfView => _fieldOfView;
     public List<SkillManager> SkillManagers { get => _skillManagers; }
 
 
@@ -45,7 +47,7 @@ public class Unit
         _uid = System.Guid.NewGuid().ToString();
         _level = 1;
         _production = production;
-        _transform.Find("fov").transform.localScale = new Vector3(data.fieldOfView, data.fieldOfView, 0f);
+        _fieldOfView = data.fieldOfView;
     }
 
     public void SetPosition(Vector3 position)
@@ -61,7 +63,7 @@ public class Unit
         {
             Globals.GAME_RESOURCES[resource.code].AddAmount(-resource.amount);
         }
-        _transform.GetComponent<UnitManager>().EnableFOV();
+        _transform.GetComponent<UnitManager>().EnableFOV(_fieldOfView);
     }
 
     public bool CanBuy()

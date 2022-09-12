@@ -21,6 +21,15 @@ public class CameraManager : MonoBehaviour
     private int _mouseOnScreenBorder;
     private Coroutine _mouseOnScreenCoroutine;
     
+    private void OnEnable()
+    {
+        EventManager.AddListener("MoveCamera", _OnMoveCamera);
+    }
+
+    private void OnDisable()
+    {
+        EventManager.RemoveListener("MoveCamera", _OnMoveCamera);
+    }
 
     private void Awake()
     {
@@ -83,6 +92,7 @@ public class CameraManager : MonoBehaviour
             transform.position = _hit.point + Vector3.up * altitude;
         }
         
+        _FixAltitude();
         _ComputeMinimapIndicator(false);
     }
     private void _Zoom(int zoomDir)
@@ -93,6 +103,26 @@ public class CameraManager : MonoBehaviour
         _camera.orthographicSize = Mathf.Clamp(_camera.orthographicSize, 8f, 26f);
         
         _ComputeMinimapIndicator(true);
+    }
+    
+    private void _OnMoveCamera(object data)
+    {
+        Vector3 pos = (Vector3) data;
+        // (recenter the indicator around the clicked point
+        // i.e. apply a -half-width/-half-height offset)
+        float indicatorW = _minimapIndicatorMesh.vertices[1].x - _minimapIndicatorMesh.vertices[0].x;
+        float indicatorH = _minimapIndicatorMesh.vertices[2].z - _minimapIndicatorMesh.vertices[0].z;
+        pos.x -= indicatorW / 2f;
+        pos.z -= indicatorH / 2f;
+        Vector3 off = transform.position - Utils.MiddleOfScreenPointToWorld();
+        Vector3 newPos = pos + off;
+        // (make sure we are above the ground before
+        // we fix the altitude)
+        newPos.y = 100f;
+        transform.position = newPos;
+
+        _FixAltitude();
+        _ComputeMinimapIndicator(false);
     }
     
     public void OnMouseEnterScreenBorder(int borderIndex)
@@ -178,5 +208,18 @@ public class CameraManager : MonoBehaviour
         }
         // move the game object at the center of the main camera screen
         _minimapIndicator.position = middle;
+    }
+    
+    private void _FixAltitude()
+    {
+        // translate camera at proper altitude: cast a ray to the ground
+        // and move up the hit point
+        _ray = new Ray(transform.position, Vector3.up * -1000f);
+        if (Physics.Raycast(
+                _ray,
+                out _hit,
+                1000f,
+                Globals.TERRAIN_LAYER_MASK
+            )) transform.position = _hit.point + Vector3.up * altitude;
     }
 }

@@ -39,9 +39,32 @@ public class UnitManager : MonoBehaviour
     {
         return true;
     }
+    public void EnableFOV(float size)
+    {
+        fov.SetActive(true);
+        MeshRenderer mr = fov.GetComponent<MeshRenderer>();
+        mr.material = new Material(mr.material);
+        StartCoroutine(_ScalingFOV(size));
+    }
+    
     public void EnableFOV()
     {
         fov.SetActive(true);
+    }
+    private IEnumerator _ScalingFOV(float size)
+    {
+        float r = 0f, t = 0f, step = 0.05f;
+        float scaleUpTime = 0.35f;
+        Vector3 _startScale = fov.transform.localScale;
+        Vector3 _endScale = size * Vector3.one;
+        _endScale.z = 1f;
+        do
+        {
+            fov.transform.localScale = Vector3.Lerp(_startScale, _endScale, r);
+            t += step;
+            r = t / scaleUpTime;
+            yield return new WaitForSecondsRealtime(step);
+        } while (r < 1f);
     }
 
     public void Select(bool singleClick, bool holdingShift)

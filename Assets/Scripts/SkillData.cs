@@ -36,7 +36,7 @@ public class SkillData : ScriptableObject
                 var characterManager = c.Transform.GetComponent<CharacterManager>();
                 characterManager.Initialize(c);
                 characterManager.agent.Warp(instantiationPosition);
-                characterManager.EnableFOV();
+                characterManager.EnableFOV(c.FieldOfView);
             }
                 break;
             default:

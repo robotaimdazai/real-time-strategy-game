@@ -147,6 +147,7 @@ GameObject:
   - component: {fileID: 1460532215182373206}
   - component: {fileID: 8189578503290523175}
   - component: {fileID: 780930680259031205}
+  - component: {fileID: 6563186542975948247}
   m_Layer: 0
   m_Name: Tower
   m_TagString: Unit
@@ -231,6 +232,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   selectionCircle: {fileID: 1953648698}
   fov: {fileID: 6464611686313588437}
+--- !u!114 &6563186542975948247
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6933451179257593799}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac9c6917d5ac84041b2644c8c66a1733, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  myRenderer: {fileID: 8750088617328803780}
+  threshold: 0.1
 --- !u!1001 &3068929391472947164
 PrefabInstance:
   m_ObjectHideFlags: 0

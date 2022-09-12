@@ -96,6 +96,7 @@ GameObject:
   - component: {fileID: 1460532215182373206}
   - component: {fileID: 4561536894510653208}
   - component: {fileID: 780930680259031205}
+  - component: {fileID: 8919621411509326860}
   m_Layer: 0
   m_Name: House
   m_TagString: Unit
@@ -180,6 +181,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   selectionCircle: {fileID: 8033968629972719681}
   fov: {fileID: 3381412828160461372}
+--- !u!114 &8919621411509326860
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6933451179257593799}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac9c6917d5ac84041b2644c8c66a1733, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  myRenderer: {fileID: 8750088617328803780}
+  threshold: 0.1
 --- !u!1 &8033968629972719681
 GameObject:
   m_ObjectHideFlags: 0
