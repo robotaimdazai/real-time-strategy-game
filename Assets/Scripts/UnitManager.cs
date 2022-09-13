@@ -7,13 +7,14 @@ public class UnitManager : MonoBehaviour
 {
     public GameObject selectionCircle;
     public GameObject fov;
+    public AudioSource contextualSource;
     
     protected BoxCollider _collider;
     public virtual Unit Unit { get; set; }
     
     private Transform _canvas;
     private GameObject _healthbar;
-   
+    
     
 
     private void Awake()
@@ -114,6 +115,7 @@ public class UnitManager : MonoBehaviour
             h.SetPosition();
         }
         EventManager.TriggerEvent("SelectUnit", Unit);
+        contextualSource.PlayOneShot(Unit.Data.onSelectSound);
     }
     
     public void Select()

@@ -18,6 +18,8 @@ public class SkillData : ScriptableObject
     public float castTime;
     public float cooldown;
     public Sprite sprite;
+    public AudioClip onStartSound;
+    public AudioClip onEndSound;
 
     public void Trigger(GameObject source, GameObject target = null)
     {

@@ -10,6 +10,7 @@ public class CameraManager : MonoBehaviour
     public float altitude = 40f;
     public float zoomSpeed = 30f;
     public Material minimapIndicatorMaterial;
+    public Transform groundTarget;
     
     private float _minimapIndicatorStrokeWidth = 0.1f; // relative to indicator size
     private Transform _minimapIndicator;
@@ -38,6 +39,7 @@ public class CameraManager : MonoBehaviour
         _mouseOnScreenBorder = -1;
         _mouseOnScreenCoroutine = null;
         _PrepareMapIndicator();
+        groundTarget.position = Utils.MiddleOfScreenPointToWorld();
     }
     
     void Update()
@@ -177,6 +179,7 @@ public class CameraManager : MonoBehaviour
     private void _ComputeMinimapIndicator(bool zooming)
     {
         Vector3 middle = Utils.MiddleOfScreenPointToWorld();
+        groundTarget.position = middle;
         // if zooming: recompute the indicator mesh
         if (zooming)
         {

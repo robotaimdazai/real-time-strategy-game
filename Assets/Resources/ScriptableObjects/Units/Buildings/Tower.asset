@@ -26,3 +26,5 @@ MonoBehaviour:
   - code: stone
     amount: 100
   skills: []
+  onSelectSound: {fileID: 8300000, guid: 4d3eda5ad26b045408f87c6ee1d0f656, type: 3}
+  ambientSound: {fileID: 0}

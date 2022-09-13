@@ -20,7 +20,16 @@ public class CharacterManager : UnitManager
     }
     
     public void MoveTo(Vector3 targetPosition)
+    {
+        UnityEngine.AI.NavMeshPath path = new UnityEngine.AI.NavMeshPath();
+        agent.CalculatePath(targetPosition, path);
+        if (path.status == UnityEngine.AI.NavMeshPathStatus.PathInvalid)
         {
-            agent.destination = targetPosition;
+            contextualSource.PlayOneShot(((CharacterData)Unit.Data).onMoveInvalidSound);
+            return;
         }
+
+        agent.destination = targetPosition;
+        contextualSource.PlayOneShot(((CharacterData)Unit.Data).onMoveValidSound);
+    }
 }

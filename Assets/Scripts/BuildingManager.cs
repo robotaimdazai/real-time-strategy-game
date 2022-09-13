@@ -5,6 +5,7 @@ using UnityEngine;
 [RequireComponent(typeof(BoxCollider))]
 public class BuildingManager : UnitManager
 {
+    public AudioSource ambientSource;
     private Building _building = null;
     private int _nCollisions = 0;
 
@@ -23,6 +24,13 @@ public class BuildingManager : UnitManager
     {
         _collider = GetComponent<BoxCollider>();
         _building = building;
+        var ambientClip = (building.Data as BuildingData).ambientSound;
+        if (ambientClip & ambientSource)
+        {
+            ambientSource.clip = ambientClip;
+            ambientSource.Play();
+        }
+        
     }
 
     private void OnTriggerEnter(Collider other)
