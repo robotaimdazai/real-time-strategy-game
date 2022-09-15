@@ -7,7 +7,7 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
     public Vector3 startPosition;
-    public GameParameters gameParameters;
+    public GameGlobalParameters gameGlobalParameters;
     
     private Ray _ray;
     private RaycastHit _raycastHit;
@@ -15,13 +15,14 @@ public class GameManager : MonoBehaviour
     {
         DataHandler.LoadGameData();
         instance = this;
-        GetComponent<DayNightCycler>().enabled = gameParameters.enableDayAndNightCycle;
+        GetComponent<DayNightCycler>().enabled = gameGlobalParameters.enableDayAndNightCycle;
         _GetStartPosition();
     }
 
     private void Start()
     {
-        GameObject.Find("FogOfWar").SetActive(gameParameters.enableFOV);
+        GameObject.Find("FogOfWar").SetActive(gameGlobalParameters.enableFOV);
+        
     }
 
     private void Update()

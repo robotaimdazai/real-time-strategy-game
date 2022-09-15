@@ -10,10 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: abcf72084a80f924eb7f30ef79a95abb, type: 3}
-  m_Name: GameParameters
+  m_Name: Global Parameters
   m_EditorClassIdentifier: 
+  _fieldsToShowInGame:
+  - enableDayAndNightCycle
+  - enableFOV
   enableDayAndNightCycle: 1
   dayLengthInSeconds: 20
-  dayInitialRatio: 1
+  dayInitialRatio: 0
   initialBuilding: {fileID: 11400000, guid: ac6e7b9335ff963478060f9459179621, type: 2}
-  enableFOV: 1
+  enableFOV: 0

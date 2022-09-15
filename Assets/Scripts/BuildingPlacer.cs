@@ -13,7 +13,7 @@ public class BuildingPlacer : MonoBehaviour
 
     private void Start()
     {
-        _placedBuilding = new Building(GameManager.instance.gameParameters.initialBuilding);
+        _placedBuilding = new Building(GameManager.instance.gameGlobalParameters.initialBuilding);
         _placedBuilding.SetPosition(GameManager.instance.startPosition);
         // link the data into the manager
         _placedBuilding.Transform.GetComponent<BuildingManager>().Initialize(_placedBuilding);

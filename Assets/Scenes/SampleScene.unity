@@ -1907,7 +1907,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   startPosition: {x: 0, y: 0, z: 0}
-  gameParameters: {fileID: 11400000, guid: 143b4b0c0f3b93b449aaec7473add540, type: 2}
+  gameGlobalParameters: {fileID: 11400000, guid: 2b9a01e9119400c4ba7570a0c12c3958, type: 2}
 --- !u!114 &853173698
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1920,7 +1920,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d943ec3034da7af43b16f2f22afadcfa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameParameters: {fileID: 11400000, guid: 143b4b0c0f3b93b449aaec7473add540, type: 2}
+  gameGlobalParameters: {fileID: 11400000, guid: 2b9a01e9119400c4ba7570a0c12c3958, type: 2}
   starsTransform: {fileID: 672128312}
 --- !u!82 &853173699
 AudioSource:
