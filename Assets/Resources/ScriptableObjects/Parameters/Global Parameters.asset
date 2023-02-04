@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Global Parameters
   m_EditorClassIdentifier: 
   _fieldsToShowInGame:
-  - enableDayAndNightCycle
   - enableFOV
+  - enableDayAndNightCycle
   enableDayAndNightCycle: 1
   dayLengthInSeconds: 20
   dayInitialRatio: 0

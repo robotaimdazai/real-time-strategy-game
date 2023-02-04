@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using UnityEngine;
 
 public static class Utils 
@@ -163,5 +164,11 @@ public static class Utils
         }
         return corners;
     }
-    
+
+    public static string CapitalizeText(string text)
+    {
+        var fieldNameWithSpaces = Regex.Replace(text, "(\\B[A-Z])", " $1");
+        return fieldNameWithSpaces.ToUpper();
+    }
+
 }

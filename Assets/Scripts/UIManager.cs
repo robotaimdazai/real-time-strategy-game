@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
@@ -20,7 +22,16 @@ public class UIManager : MonoBehaviour
     public Transform selectionGroupsParent;
     public GameObject selectedUnitMenu;
     public GameObject unitSkillButtonPrefab;
-    
+    public GameObject gameSettingsPanel;
+    public Transform gameSettingsMenusParent;
+    public TextMeshProUGUI gameSettingsContentName;
+    public Transform gameSettingsContentParent;
+    public GameObject gameSettingsMenuButtonPrefab;
+    public GameObject gameSettingsParameterPrefab;
+    public GameObject sliderPrefab;
+    public GameObject togglePrefab;
+    public GameObject overlayTint;
+
     private Unit _selectedUnit;
     private RectTransform _selectedUnitContentRectTransform;
     private TextMeshProUGUI _selectedUnitTitleText;
@@ -33,6 +44,7 @@ public class UIManager : MonoBehaviour
     private TextMeshProUGUI _infoPanelTitleText;
     private TextMeshProUGUI _infoPanelDescriptionText;
     private Transform _infoPanelResourcesCostParent;
+    private Dictionary<string, GameParameters> _gameParameters;
 
     private void OnEnable()
     {
@@ -110,13 +122,153 @@ public class UIManager : MonoBehaviour
             .Find("SpecificActions");
         
         _ShowSelectedUnitMenu(false);
+        gameSettingsPanel.SetActive(false);
+        
+        GameParameters[] gameParametersList = Resources.LoadAll<GameParameters>(
+            "ScriptableObjects/Parameters");
+        _gameParameters = new Dictionary<string, GameParameters>();
+        foreach (GameParameters p in gameParametersList)
+            _gameParameters[p.GetParametersName()] = p;
+        _SetupGameSettingsPanel();
+    }
+
+    private void _SetupGameSettingsPanel()
+    {
+        List<String> availableMenus = new List<string>();
+        foreach (var parameter in _gameParameters.Values)
+        {
+            if (parameter.FieldsToShowInGame.Count == 0)
+                continue;
+
+            var spawnedMenu =Instantiate(gameSettingsMenuButtonPrefab, gameSettingsMenusParent);
+            var label =spawnedMenu.GetComponentInChildren<TextMeshProUGUI>();
+            var parameterName = parameter.GetParametersName();
+            var button = spawnedMenu.GetComponent<Button>();
+            if (label)
+                label.text = parameterName;
+            availableMenus.Add(parameterName);
+            _AddGameSettingsPanelMenuListener(button, parameterName);
+        }
     }
     
+    private void _AddGameSettingsPanelMenuListener(Button b, string menu)
+    {
+        b.onClick.AddListener(() => _SetGameSettingsContent(menu));
+    }
+
+    private void _SetGameSettingsContent(string menuName)
+    {
+        gameSettingsContentName.text = menuName;
+
+        //destroy all previous menus
+        foreach (Transform child in gameSettingsContentParent)
+        {
+            Destroy(child.gameObject);
+        }
+
+        var parameters = _gameParameters[menuName];
+        var parameterType = parameters.GetType();
+        int index = 0;
+        GameObject gWrapper, gEditor;
+        RectTransform rtWrapper, rtEditor;
+        int i = 0;
+        float contentWidth = 400f;
+        float parameterNameWidth = 200f;
+        float fieldHeight = 32f;
+        foreach (var fieldName in parameters.FieldsToShowInGame)
+        {
+            gWrapper = Instantiate(gameSettingsParameterPrefab, gameSettingsContentParent);
+            var gameSettingsLabel = gWrapper.GetComponent<TextMeshProUGUI>();
+            gameSettingsLabel.text = Utils.CapitalizeText(fieldName);
+            var field = parameterType.GetField(fieldName);
+            var fieldType = field.FieldType;
+            
+            gEditor = null;
+            if (fieldType == typeof(bool))
+            {
+                gEditor = Instantiate(togglePrefab);
+                var toggle = gEditor.GetComponent<Toggle>();
+                toggle.isOn = (bool) field.GetValue(parameters);
+                toggle.onValueChanged.AddListener(delegate
+                {
+                    _OnGameSettingsToggleValueChanged(parameters, field, fieldName, toggle);
+                });
+            }
+            else if (fieldType == typeof(int) || fieldType == typeof(float))
+            {
+                bool isRange = Attribute.IsDefined(field, typeof(RangeAttribute), false);
+                if (isRange)
+                {
+                    var rangeAttribute = (RangeAttribute)Attribute.GetCustomAttribute(field, typeof(RangeAttribute), false);
+                    if (rangeAttribute != null)
+                    {
+                        gEditor = Instantiate(sliderPrefab);
+                        var slider = gEditor.GetComponent<Slider>();
+                        slider.maxValue = rangeAttribute.max;
+                        slider.minValue = rangeAttribute.min;
+                        slider.value = fieldType == typeof(int)
+                            ? (int)field.GetValue(parameters)
+                            : (float)field.GetValue(parameters);
+                        slider.onValueChanged.AddListener(delegate
+                        {
+                            _OnGameSettingsSliderValueChanged(parameters, field, fieldName, slider);
+                        });
+                    }
+                }
+            }
+            
+            rtWrapper = gWrapper.GetComponent<RectTransform>();
+            rtWrapper.anchoredPosition = new Vector2(0f, -i * fieldHeight);
+            rtWrapper.sizeDelta = new Vector2(contentWidth, fieldHeight);
+
+            if (gEditor != null)
+            {
+                gEditor.transform.SetParent(gWrapper.transform);
+                rtEditor = gEditor.GetComponent<RectTransform>();
+                rtEditor.anchoredPosition = new Vector2((parameterNameWidth + 16f), 0f);
+                rtEditor.sizeDelta = new Vector2(rtWrapper.sizeDelta.x - (parameterNameWidth + 16f), fieldHeight);
+            }
+
+            i++;
+        }
+        
+        RectTransform rt = gameSettingsContentParent.GetComponent<RectTransform>();
+        Vector2 size = rt.sizeDelta;
+        size.y = i * fieldHeight;
+        rt.sizeDelta = size;
+    }
+
+    private void _OnGameSettingsToggleValueChanged(GameParameters parameters, FieldInfo field, string gameParameter, Toggle change)
+    {
+        field.SetValue(parameters,change.isOn);
+        EventManager.TriggerEvent($"UpdateGameParameter:{gameParameter}", change.isOn);
+    }
+    
+    private void _OnGameSettingsSliderValueChanged(
+        GameParameters parameters,
+        FieldInfo field,
+        string gameParameter,
+        Slider change
+    )
+    {
+        if (field.FieldType == typeof(int))
+            field.SetValue(parameters, (int) change.value);
+        else
+            field.SetValue(parameters, change.value);
+        EventManager.TriggerEvent($"UpdateGameParameter:{gameParameter}", change.value);
+    }
     public void ToggleSelectionGroupButton(int groupIndex, bool on)
     {
         selectionGroupsParent.Find(groupIndex.ToString()).gameObject.SetActive(on);
     }
-
+    
+    public void ToggleGameSettingsPanel()
+    {
+        bool showGameSettingsPanel = !gameSettingsPanel.activeSelf;
+        gameSettingsPanel.SetActive(showGameSettingsPanel);
+        EventManager.TriggerEvent(showGameSettingsPanel ? "PauseGame" : "ResumeGame");
+        overlayTint.gameObject.SetActive(showGameSettingsPanel);
+    }
     
     private void _SetResourceText(string resource, int value)
     {

@@ -52,6 +52,20 @@ AudioMixerGroupController:
   m_Mute: 0
   m_Solo: 0
   m_BypassEffects: 0
+--- !u!245 &-798498336615849425
+AudioMixerSnapshotController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Unpaused
+  m_AudioMixer: {fileID: 24100000}
+  m_SnapshotID: 6801228e155468c4dbb14ccc6c4663f9
+  m_FloatValues:
+    f3fee2f0cd3c241dab93e1f23ae40d25: -12
+    e2f136ecb9a1641e883eb54ff9e072f7: 0
+    fcc1927dbd5bc4461939f4a2f846153c: 2000
+  m_TransitionOverrides: {}
 --- !u!241 &24100000
 AudioMixerController:
   m_ObjectHideFlags: 0
@@ -62,11 +76,12 @@ AudioMixerController:
   m_OutputGroup: {fileID: 0}
   m_MasterGroup: {fileID: 24300002}
   m_Snapshots:
+  - {fileID: -798498336615849425}
   - {fileID: 3281206170881274497}
-  m_StartSnapshot: {fileID: 3281206170881274497}
+  m_StartSnapshot: {fileID: -798498336615849425}
   m_SuspendThreshold: -80
   m_EnableSuspend: 1
-  m_UpdateMode: 0
+  m_UpdateMode: 1
   m_ExposedParameters:
   - guid: f3fee2f0cd3c241dab93e1f23ae40d25
     name: musicVol
@@ -135,11 +150,11 @@ AudioMixerSnapshotController:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Default
+  m_Name: Paused
   m_AudioMixer: {fileID: 24100000}
   m_SnapshotID: 0b84b68f5f7554fe695d122d83e95d81
   m_FloatValues:
-    f3fee2f0cd3c241dab93e1f23ae40d25: -12
-    e2f136ecb9a1641e883eb54ff9e072f7: 0
+    f3fee2f0cd3c241dab93e1f23ae40d25: -19.996979
+    e2f136ecb9a1641e883eb54ff9e072f7: -80
     fcc1927dbd5bc4461939f4a2f846153c: 2000
   m_TransitionOverrides: {}

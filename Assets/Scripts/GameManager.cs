@@ -8,6 +8,10 @@ public class GameManager : MonoBehaviour
     public static GameManager instance;
     public Vector3 startPosition;
     public GameGlobalParameters gameGlobalParameters;
+    public GameObject fov;
+    
+    [HideInInspector]
+    public bool gameIsPaused;
     
     private Ray _ray;
     private RaycastHit _raycastHit;
@@ -17,17 +21,55 @@ public class GameManager : MonoBehaviour
         instance = this;
         GetComponent<DayNightCycler>().enabled = gameGlobalParameters.enableDayAndNightCycle;
         _GetStartPosition();
+        gameIsPaused = false;
+        fov.SetActive(gameGlobalParameters.enableFOV);
+    }
+    
+    private void OnEnable()
+    {
+        EventManager.AddListener("PauseGame", _OnPauseGame);
+        EventManager.AddListener("ResumeGame", _OnResumeGame);
+        EventManager.AddListener("UpdateGameParameter:enableDayAndNightCycle", _OnUpdateDayAndNightCycle);
+        EventManager.AddListener("UpdateGameParameter:enableFOV", _OnUpdateFOV);
     }
 
-    private void Start()
+    private void OnDisable()
     {
-        GameObject.Find("FogOfWar").SetActive(gameGlobalParameters.enableFOV);
-        
+        EventManager.RemoveListener("PauseGame", _OnPauseGame);
+        EventManager.RemoveListener("ResumeGame", _OnResumeGame);
+        EventManager.RemoveListener("UpdateGameParameter:enableDayAndNightCycle", _OnUpdateDayAndNightCycle);
+        EventManager.RemoveListener("UpdateGameParameter:enableFOV", _OnUpdateFOV);
     }
+
+    
 
     private void Update()
     {
+        if (gameIsPaused) return;
         _CheckUnitsNavigation();
+    }
+    
+    private void _OnUpdateDayAndNightCycle(object data)
+    {
+        bool dayAndNightIsOn = (bool)data;
+        GetComponent<DayNightCycler>().enabled = dayAndNightIsOn;
+    }
+    private void _OnUpdateFOV(object data)
+    {
+        bool fovIsOn = (bool)data;
+        fov.SetActive(fovIsOn);
+    }
+    
+    private void _OnPauseGame()
+    {
+        gameIsPaused = true;
+        Time.timeScale = 0;
+    }
+
+    private void _OnResumeGame()
+    {
+        gameIsPaused = false;
+        Time.timeScale = 1;
     }
     
     private void _GetStartPosition()

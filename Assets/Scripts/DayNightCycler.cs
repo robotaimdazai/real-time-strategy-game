@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,11 +11,6 @@ public class DayNightCycler : MonoBehaviour
     private float _starsRefreshRate;
     private float _rotationAngleStep;
     private Vector3 _rotationAxis;
-
-    private void Awake()
-    {
-        
-    }
 
     private void Start()
     {
@@ -30,7 +26,7 @@ public class DayNightCycler : MonoBehaviour
         _rotationAngleStep = 360f * _starsRefreshRate / GameManager.instance.gameGlobalParameters.dayLengthInSeconds;
         StartCoroutine(_UpdateStars());
     }
-
+    
     private IEnumerator _UpdateStars()
     {
         float rotation = 0f;

@@ -25,6 +25,8 @@ public class BuildingPlacer : MonoBehaviour
 
     void Update()
     {
+        if (GameManager.instance.gameIsPaused) return;
+        
         if (_placedBuilding != null)
         {
             if (Input.GetKeyUp(KeyCode.Escape))

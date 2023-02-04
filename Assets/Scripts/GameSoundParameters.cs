@@ -12,9 +12,9 @@ public class GameSoundParameters : GameParameters
     public AudioClip onNightStartSound;
     public AudioClip onBuildingPlacedSound;
     
-    [Range(0, 100)]
+    [Range(-80, -12)]
     public int musicVolume;
 
-    [Range(0, 100)]
+    [Range(-80, 0)]
     public int sfxVolume;
 }
