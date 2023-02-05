@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class GameManager : MonoBehaviour
 {
@@ -101,6 +102,12 @@ public class GameManager : MonoBehaviour
 
         
     }
-
+    
+    private void OnApplicationQuit()
+    {
+#if !UNITY_EDITOR
+        DataHandler.SaveGameData();
+#endif
+    }
 
 }
