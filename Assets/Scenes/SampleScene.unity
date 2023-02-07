@@ -2369,6 +2369,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   startPosition: {x: 0, y: 0, z: 0}
   gameGlobalParameters: {fileID: 11400000, guid: 2b9a01e9119400c4ba7570a0c12c3958, type: 2}
+  gamePlayersParameters: {fileID: 11400000, guid: 25c2bad9f8cb29244af8ffdc419e1172, type: 2}
   fov: {fileID: 1183228691}
   gameIsPaused: 0
 --- !u!114 &853173698

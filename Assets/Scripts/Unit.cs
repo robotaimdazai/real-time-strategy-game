@@ -12,6 +12,7 @@ public class Unit
     protected List<ResourceValue> _production;
     protected List<SkillManager> _skillManagers;
     protected float _fieldOfView;
+    protected int _owner;
     
     public string Uid { get => _uid; }
     public int Level { get => _level; }
@@ -23,19 +24,23 @@ public class Unit
     public int MaxHP { get => _data.healthpoints; }
     public float FieldOfView => _fieldOfView;
     public List<SkillManager> SkillManagers { get => _skillManagers; }
+    public int Owner { get => _owner; }
 
 
-    public Unit(UnitData data) : this(data, new List<ResourceValue>() { })
+    public Unit(UnitData data, int owner) : this(data, owner,new List<ResourceValue>() { })
     {
+        
     }
-    public Unit(UnitData data, List<ResourceValue> production)
+    public Unit(UnitData data, int owner, List<ResourceValue> production)
     {
         _data = data;
         _currentHealth = data.healthpoints;
+        _owner = owner;
 
         GameObject g = GameObject.Instantiate(data.prefab) as GameObject;
         _transform = g.transform;
-        
+        _transform.GetComponent<UnitManager>().SetOwnerMaterial(owner);
+
         _skillManagers = new List<SkillManager>();
         SkillManager sm;
         foreach (SkillData skill in _data.skills)
@@ -48,6 +53,7 @@ public class Unit
         _level = 1;
         _production = production;
         _fieldOfView = data.fieldOfView;
+        _transform.GetComponent<UnitManager>().Initialize(this);
     }
 
     public void SetPosition(Vector3 position)
@@ -57,13 +63,16 @@ public class Unit
 
     public virtual void Place()
     {
-        
         _transform.GetComponent<BoxCollider>().isTrigger = false;
-        foreach (ResourceValue resource in _data.cost)
+        if (_owner == GameManager.instance.gamePlayersParameters.myPlayerId)
         {
-            Globals.GAME_RESOURCES[resource.code].AddAmount(-resource.amount);
+            foreach (ResourceValue resource in _data.cost)
+            {
+                Globals.GAME_RESOURCES[resource.code].AddAmount(-resource.amount);
+            }
+            
+            _transform.GetComponent<UnitManager>().EnableFOV(_fieldOfView);
         }
-        _transform.GetComponent<UnitManager>().EnableFOV(_fieldOfView);
     }
 
     public bool CanBuy()

@@ -4,6 +4,6 @@ using UnityEngine;
 
 public class Character : Unit
 {
-    public Character(CharacterData data) :
-        base(data, new List<ResourceValue>() { }) {}
+    public Character(CharacterData data, int owner) :
+        base(data,owner,new List<ResourceValue>() { }) {}
 }

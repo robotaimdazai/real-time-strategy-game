@@ -34,9 +34,11 @@ public class SkillData : ScriptableObject
                     source.transform.position.z - coll.size.z * 0.7f
                 );
                 CharacterData d = (CharacterData) unitReference;
-                Character c = new Character(d);
+                UnitManager sourceUnitManager = source.GetComponent<UnitManager>();
+                if (sourceUnitManager == null)
+                    return;
+                Character c = new Character(d, sourceUnitManager.Unit.Owner);
                 var characterManager = c.Transform.GetComponent<CharacterManager>();
-                characterManager.Initialize(c);
                 characterManager.agent.Warp(instantiationPosition);
                 characterManager.EnableFOV(c.FieldOfView);
             }

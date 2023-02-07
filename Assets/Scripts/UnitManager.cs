@@ -8,6 +8,7 @@ public class UnitManager : MonoBehaviour
     public GameObject selectionCircle;
     public GameObject fov;
     public AudioSource contextualSource;
+    public int ownerMaterialSlotIndex = 0;
     
     protected BoxCollider _collider;
     public virtual Unit Unit { get; set; }
@@ -24,13 +25,21 @@ public class UnitManager : MonoBehaviour
 
     private void OnMouseDown()
     {
-        if (IsActive())
+        if (IsActive() && _IsMyUnit())
         {
             bool isHoldingShift = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
             Select(true, isHoldingShift);
         }
     }
 
+    public void SetOwnerMaterial(int owner)
+    {
+        Color playerColor = GameManager.instance.gamePlayersParameters.players[owner].color;
+        Material[] materials = transform.Find("Mesh").GetComponent<Renderer>().materials;
+        materials[ownerMaterialSlotIndex].color = playerColor;
+        transform.Find("Mesh").GetComponent<Renderer>().materials = materials;
+    }
+    
     public void Initialize(Unit unit)
     {
         _collider = GetComponent<BoxCollider>();
@@ -46,6 +55,10 @@ public class UnitManager : MonoBehaviour
         MeshRenderer mr = fov.GetComponent<MeshRenderer>();
         mr.material = new Material(mr.material);
         StartCoroutine(_ScalingFOV(size));
+    }
+    private bool _IsMyUnit()
+    {
+        return Unit.Owner == GameManager.instance.gamePlayersParameters.myPlayerId;
     }
     
     public void EnableFOV()

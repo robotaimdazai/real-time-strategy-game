@@ -10,7 +10,7 @@ using Object = UnityEngine.Object;
 public class GameParametersEditor : Editor
 {
     private delegate void DDrawPrefix(Object obj, FieldInfo field);
-    public override void OnInspectorGUI()
+    public  void OnInspectorGUI_LEGACY()
     {
         GameParameters parameters = (GameParameters)target;
         
@@ -35,7 +35,41 @@ public class GameParametersEditor : Editor
             _DrawField(parameters, fields[i], drawPrefix);
         }
     }
-    
+
+    public override void OnInspectorGUI()
+    {
+        serializedObject.Update();
+        GameParameters parameters = (GameParameters)target;
+        EditorGUILayout.LabelField(parameters.GetParametersName(),EditorStyles.boldLabel);
+        var type = parameters.GetType();
+        var fields = type.GetFields();
+        foreach (var field in fields)
+        {
+            bool isHidden = Attribute.IsDefined(field, typeof(HideInInspector), false);
+            if(isHidden)
+                continue;
+            
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.BeginVertical(GUILayout.Width(20f));
+            bool hasHeader = System.Attribute.IsDefined(field, typeof(HeaderAttribute), false);
+            if (hasHeader)
+                GUILayout.FlexibleSpace();
+            
+            if (GUILayout.Button(parameters.ShowsField(field.Name) ? "-" : "+", GUILayout.Width(20f)))
+            {
+                parameters.ToggleShowField(field.Name);
+                EditorUtility.SetDirty(parameters);
+                AssetDatabase.SaveAssets();
+            }
+            EditorGUILayout.EndVertical();
+            GUILayout.Space(16);
+            EditorGUILayout.PropertyField(serializedObject.FindProperty(field.Name), true);
+            EditorGUILayout.EndHorizontal();
+        }
+        serializedObject.ApplyModifiedProperties();
+    }
+
+    //legacy
     void _DrawField(Object obj, FieldInfo field, DDrawPrefix drawPrefix = null)
     {
         if (System.Attribute.IsDefined(field, typeof(HideInInspector), false))

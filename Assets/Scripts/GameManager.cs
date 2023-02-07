@@ -9,6 +9,7 @@ public class GameManager : MonoBehaviour
     public static GameManager instance;
     public Vector3 startPosition;
     public GameGlobalParameters gameGlobalParameters;
+    public GamePlayersParameters gamePlayersParameters;
     public GameObject fov;
     
     [HideInInspector]

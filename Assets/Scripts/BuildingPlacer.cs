@@ -13,14 +13,30 @@ public class BuildingPlacer : MonoBehaviour
 
     private void Start()
     {
-        _placedBuilding = new Building(GameManager.instance.gameGlobalParameters.initialBuilding);
-        _placedBuilding.SetPosition(GameManager.instance.startPosition);
-        // link the data into the manager
-        _placedBuilding.Transform.GetComponent<BuildingManager>().Initialize(_placedBuilding);
-        _PlaceBuilding();
-        // make sure we have no building selected when the player starts
-        // to play
-        _CancelPlacedBuilding();
+        SpawnBuilding(
+            GameManager.instance.gameGlobalParameters.initialBuilding,
+            GameManager.instance.gamePlayersParameters.myPlayerId,
+            GameManager.instance.startPosition
+        );
+        SpawnBuilding(
+            GameManager.instance.gameGlobalParameters.initialBuilding,
+            0,
+            Vector3.zero
+        );
+    }
+    public void SpawnBuilding(BuildingData data, int owner, Vector3 position)
+    {
+        SpawnBuilding(data, owner, position, new List<ResourceValue>() { });
+    }
+    public void SpawnBuilding(BuildingData data, int owner, Vector3 position, List<ResourceValue> production)
+    {
+        Building prevPlacedBuilding = _placedBuilding;
+        
+        _placedBuilding = new Building(data, owner, production);
+        _placedBuilding.SetPosition(position);
+       
+        _PlaceBuilding(false);
+        _placedBuilding = prevPlacedBuilding;
     }
 
     void Update()
@@ -61,9 +77,8 @@ public class BuildingPlacer : MonoBehaviour
         if(_placedBuilding!=null && !_placedBuilding.IsFixed)
             Destroy(_placedBuilding.Transform.gameObject);
 
-        var building = new Building(Globals.BUILDING_DATA[buildingDataIndex]);
-        building.Transform.GetComponent<BuildingManager>().Initialize(building);
-        
+        var building = new Building(Globals.BUILDING_DATA[buildingDataIndex],GameManager.instance.gamePlayersParameters.myPlayerId);
+
         _placedBuilding = building;
         _lastPlacementPosition = Vector3.zero;
     }
@@ -74,7 +89,7 @@ public class BuildingPlacer : MonoBehaviour
         _placedBuilding = null;
     }
     
-    void _PlaceBuilding()
+    void _PlaceBuilding(bool canChain = true)
     {
         _placedBuilding.Place();
         if(_placedBuilding.CanBuy())
