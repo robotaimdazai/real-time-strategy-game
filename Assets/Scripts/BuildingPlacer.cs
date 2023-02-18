@@ -16,7 +16,13 @@ public class BuildingPlacer : MonoBehaviour
         SpawnBuilding(
             GameManager.instance.gameGlobalParameters.initialBuilding,
             GameManager.instance.gamePlayersParameters.myPlayerId,
-            GameManager.instance.startPosition
+            GameManager.instance.startPosition,
+            new List<ResourceValue>()
+            {
+                new ResourceValue(InGameResource.Gold,5),
+                new ResourceValue(InGameResource.Wood, 3),
+                new ResourceValue(InGameResource.Stone, 2),
+            }
         );
         SpawnBuilding(
             GameManager.instance.gameGlobalParameters.initialBuilding,
@@ -58,6 +64,11 @@ public class BuildingPlacer : MonoBehaviour
                 if (_lastPlacementPosition != _raycastHit.point)
                 {
                     _placedBuilding.CheckValidPlacement();
+                    Dictionary<InGameResource, int> prod = _placedBuilding.ComputeProduction();
+                    EventManager.TriggerEvent(
+                        "UpdatePlacedBuildingProduction",
+                        new object[] { prod, _raycastHit.point }
+                    );
                 }
                 _lastPlacementPosition = _raycastHit.point;
             }
@@ -81,16 +92,19 @@ public class BuildingPlacer : MonoBehaviour
 
         _placedBuilding = building;
         _lastPlacementPosition = Vector3.zero;
+        EventManager.TriggerEvent("PlaceBuildingOn");
     }
     
     void _CancelPlacedBuilding()
     {
         Destroy(_placedBuilding.Transform.gameObject);
         _placedBuilding = null;
+        EventManager.TriggerEvent("PlaceBuildingOff");
     }
     
     void _PlaceBuilding(bool canChain = true)
     {
+        _placedBuilding.ComputeProduction();
         _placedBuilding.Place();
         if(_placedBuilding.CanBuy())
             _PreparePlacedBuilding(_placedBuilding.DataIndex);
@@ -100,5 +114,6 @@ public class BuildingPlacer : MonoBehaviour
         EventManager.TriggerEvent("UpdateResourceTexts");
         EventManager.TriggerEvent("CheckBuildingButtons");
         EventManager.TriggerEvent("PlaySoundByName", "onBuildingPlacedSound");
+        EventManager.TriggerEvent("PlaceBuildingOff");
     }
 }

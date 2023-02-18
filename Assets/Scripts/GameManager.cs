@@ -14,7 +14,12 @@ public class GameManager : MonoBehaviour
     
     [HideInInspector]
     public bool gameIsPaused;
+
+    public List<Unit> ownedProducingUnits = new List<Unit>();
+    private float _producingRate = 3f; 
+    private Coroutine _producingResourcesCoroutine = null;
     
+
     private Ray _ray;
     private RaycastHit _raycastHit;
     private void Awake()
@@ -25,6 +30,7 @@ public class GameManager : MonoBehaviour
         _GetStartPosition();
         gameIsPaused = false;
         fov.SetActive(gameGlobalParameters.enableFOV);
+        _producingResourcesCoroutine = StartCoroutine(_ProducingResources());
     }
     
     private void OnEnable()
@@ -51,6 +57,16 @@ public class GameManager : MonoBehaviour
         _CheckUnitsNavigation();
     }
     
+    private IEnumerator _ProducingResources()
+    {
+        while (true)
+        {
+            foreach (Unit unit in ownedProducingUnits)
+                unit.ProduceResources();
+            EventManager.TriggerEvent("UpdateResourceTexts");
+            yield return new WaitForSeconds(_producingRate);
+        }
+    }
     private void _OnUpdateDayAndNightCycle(object data)
     {
         bool dayAndNightIsOn = (bool)data;

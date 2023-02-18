@@ -19,4 +19,9 @@ MonoBehaviour:
   dayLengthInSeconds: 20
   dayInitialRatio: 0
   initialBuilding: {fileID: 11400000, guid: ac6e7b9335ff963478060f9459179621, type: 2}
-  enableFOV: 0
+  baseGoldProduction: 5
+  bonusGoldProductionPerBuilding: 2
+  goldBonusRange: 10
+  woodProductionRange: 10
+  stoneProductionRange: 10
+  enableFOV: 1

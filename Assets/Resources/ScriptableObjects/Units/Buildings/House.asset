@@ -19,11 +19,12 @@ MonoBehaviour:
   fieldOfView: 15
   prefab: {fileID: 6933451179257593799, guid: 6f1b0902852b2c24d9b7eef363c08adb, type: 3}
   cost:
-  - code: gold
+  - code: 0
     amount: 100
-  - code: wood
+  - code: 1
     amount: 120
   skills:
   - {fileID: 11400000, guid: af1c797020380b24c86843e232febe65, type: 2}
   onSelectSound: {fileID: 8300000, guid: 5fcdb8808e727418799af689b1ce0d74, type: 3}
+  canProduce: 00000000
   ambientSound: {fileID: 8300000, guid: c0f50d5293b224b9486abd58973e08af, type: 3}

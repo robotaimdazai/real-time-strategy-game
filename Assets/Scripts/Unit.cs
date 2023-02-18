@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Unit
@@ -9,14 +10,14 @@ public class Unit
     protected int _currentHealth;
     protected string _uid;
     protected int _level;
-    protected List<ResourceValue> _production;
+    protected Dictionary<InGameResource, int> _production;
     protected List<SkillManager> _skillManagers;
     protected float _fieldOfView;
     protected int _owner;
     
     public string Uid { get => _uid; }
     public int Level { get => _level; }
-    public List<ResourceValue> Production { get => _production; }
+    public Dictionary<InGameResource, int> Production { get => _production; }
     public UnitData Data { get => _data; }
     public string Code { get => _data.code; }
     public Transform Transform { get => _transform; }
@@ -51,9 +52,54 @@ public class Unit
         }
         _uid = System.Guid.NewGuid().ToString();
         _level = 1;
-        _production = production;
+        _production = production.ToDictionary(x => x.code,x=>x.amount );
         _fieldOfView = data.fieldOfView;
         _transform.GetComponent<UnitManager>().Initialize(this);
+    }
+
+    public Dictionary<InGameResource, int> ComputeProduction()
+    {
+        if (_data.canProduce.Length == 0) return null;
+
+        GameGlobalParameters globalParams = GameManager.instance.gameGlobalParameters;
+        GamePlayersParameters playerParams = GameManager.instance.gamePlayersParameters;
+        Vector3 pos = _transform.position;
+
+        if (_data.canProduce.Contains(InGameResource.Gold))
+        {
+            int bonusBuildingsCount = Physics.OverlapSphere(pos, globalParams.goldBonusRange, Globals.UNIT_MASK).Where(
+                collider =>
+                {
+                    var buildingManager = collider.GetComponent<BuildingManager>();
+                    if (buildingManager == null) return false;
+                    return buildingManager.Unit.Owner == playerParams.myPlayerId;
+                }).Count();
+            
+            _production[InGameResource.Gold] = 
+                globalParams.baseGoldProduction + bonusBuildingsCount * globalParams.bonusGoldProductionPerBuilding;
+        }
+
+        if (_data.canProduce.Contains(InGameResource.Wood))
+        {
+            int treeScore = Physics.OverlapSphere(pos, globalParams.woodProductionRange, Globals.TREE_MASK).Select(
+                collider =>
+                {
+                    var distance = Vector3.Distance(pos, collider.transform.position);
+                    var score =globalParams.woodProductionFunc(distance);
+                    return score;
+                }).Sum();
+            _production[InGameResource.Wood] = treeScore;
+        }
+        if (_data.canProduce.Contains(InGameResource.Stone))
+        {
+            int rocksScore =
+                Physics.OverlapSphere(pos, globalParams.woodProductionRange, Globals.ROCK_MASK)
+                    .Select((c) => globalParams.stoneProductionFunc(Vector3.Distance(pos, c.transform.position)))
+                    .Sum();
+            _production[InGameResource.Stone] = rocksScore;
+        }
+
+        return _production;
     }
 
     public void SetPosition(Vector3 position)
@@ -72,6 +118,9 @@ public class Unit
             }
             
             _transform.GetComponent<UnitManager>().EnableFOV(_fieldOfView);
+            
+            if (_production.Count > 0)
+                GameManager.instance.ownedProducingUnits.Add(this);
         }
     }
 
@@ -82,8 +131,8 @@ public class Unit
     
     public void ProduceResources()
     {
-        foreach (ResourceValue resource in _production)
-            Globals.GAME_RESOURCES[resource.code].AddAmount(resource.amount);
+        foreach (var  resource in _production)
+            Globals.GAME_RESOURCES[resource.Key].AddAmount(resource.Value);
     }
     
     public void TriggerSkill(int index, GameObject target = null)
