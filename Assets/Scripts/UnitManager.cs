@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class UnitManager : MonoBehaviour
@@ -15,7 +16,8 @@ public class UnitManager : MonoBehaviour
     
     private Transform _canvas;
     private GameObject _healthbar;
-    
+    private bool _selected = false;
+    public bool IsSelected { get => _selected; }
     
 
     private void Awake()
@@ -109,7 +111,6 @@ public class UnitManager : MonoBehaviour
                 Deselect();
             }
         }
-
     }
 
     private void _SelectUtil()
@@ -129,6 +130,7 @@ public class UnitManager : MonoBehaviour
         }
         EventManager.TriggerEvent("SelectUnit", Unit);
         contextualSource.PlayOneShot(Unit.Data.onSelectSound);
+        _selected = true;
     }
     
     public void Select()
@@ -144,5 +146,6 @@ public class UnitManager : MonoBehaviour
         Destroy(_healthbar);
         _healthbar = null;
         EventManager.TriggerEvent("DeselectUnit", Unit);
+        _selected = false;
     }
 }

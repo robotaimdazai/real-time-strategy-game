@@ -14,12 +14,9 @@ public class GameManager : MonoBehaviour
     
     [HideInInspector]
     public bool gameIsPaused;
-
-    public List<Unit> ownedProducingUnits = new List<Unit>();
-    private float _producingRate = 3f; 
-    private Coroutine _producingResourcesCoroutine = null;
     
-
+    public float producingRate = 3f;
+    
     private Ray _ray;
     private RaycastHit _raycastHit;
     private void Awake()
@@ -30,7 +27,6 @@ public class GameManager : MonoBehaviour
         _GetStartPosition();
         gameIsPaused = false;
         fov.SetActive(gameGlobalParameters.enableFOV);
-        _producingResourcesCoroutine = StartCoroutine(_ProducingResources());
     }
     
     private void OnEnable()
@@ -54,19 +50,8 @@ public class GameManager : MonoBehaviour
     private void Update()
     {
         if (gameIsPaused) return;
-        _CheckUnitsNavigation();
     }
     
-    private IEnumerator _ProducingResources()
-    {
-        while (true)
-        {
-            foreach (Unit unit in ownedProducingUnits)
-                unit.ProduceResources();
-            EventManager.TriggerEvent("UpdateResourceTexts");
-            yield return new WaitForSeconds(_producingRate);
-        }
-    }
     private void _OnUpdateDayAndNightCycle(object data)
     {
         bool dayAndNightIsOn = (bool)data;
@@ -94,31 +79,7 @@ public class GameManager : MonoBehaviour
     {
         startPosition = Utils.MiddleOfScreenPointToWorld();
     }
-
-    private void _CheckUnitsNavigation()
-    {
-        if (Globals.SELECTED_UNITS.Count>0 && Input.GetMouseButtonUp(1))
-        {
-            _ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(
-                    _ray,
-                    out _raycastHit,
-                    1000f,
-                    Globals.TERRAIN_LAYER_MASK))
-            {
-                foreach (UnitManager unitManager  in Globals.SELECTED_UNITS)
-                {
-                    if (unitManager.GetType() == typeof(CharacterManager))
-                    {
-                        var characterManager = (CharacterManager)unitManager;
-                        characterManager.MoveTo(_raycastHit.point);
-                    }
-                }
-            }
-        }
-
-        
-    }
+    
     
     private void OnApplicationQuit()
     {

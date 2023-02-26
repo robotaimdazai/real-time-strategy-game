@@ -73,6 +73,8 @@ public class UIManager : MonoBehaviour
         EventManager.RemoveListener("PlaceBuildingOff", _OnPlaceBuildingOff);
     }
 
+   
+
     private void Awake()
     {
         _buildingPlacer = GetComponent<BuildingPlacer>();

@@ -119,8 +119,6 @@ public class Unit
             
             _transform.GetComponent<UnitManager>().EnableFOV(_fieldOfView);
             
-            if (_production.Count > 0)
-                GameManager.instance.ownedProducingUnits.Add(this);
         }
     }
 

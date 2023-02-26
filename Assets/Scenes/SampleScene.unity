@@ -2474,6 +2474,7 @@ MonoBehaviour:
   gamePlayersParameters: {fileID: 11400000, guid: 25c2bad9f8cb29244af8ffdc419e1172, type: 2}
   fov: {fileID: 1183228691}
   gameIsPaused: 0
+  producingRate: 3
 --- !u!114 &853173698
 MonoBehaviour:
   m_ObjectHideFlags: 0
