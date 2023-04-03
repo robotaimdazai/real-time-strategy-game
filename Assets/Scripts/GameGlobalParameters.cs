@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "Global Parameters", menuName = "Scriptable Objects/Game Global Parameters", order = 10)]
@@ -37,5 +38,16 @@ public class GameGlobalParameters : GameParameters
     {
         return Mathf.CeilToInt(2 * 1f / distance);
     };
+    
+    public int UnitMaxLevel()
+    {
+        Keyframe[] keys = experienceEvolutionCurve.keys;
+        return (int)keys.Select(k => k.time).Max();
+    }
+    
+    public AnimationCurve experienceEvolutionCurve;
+    public AnimationCurve productionMultiplierCurve;
+    public AnimationCurve attackDamageMultiplierCurve;
+    public AnimationCurve attackRangeMultiplierCurve;
     
 }

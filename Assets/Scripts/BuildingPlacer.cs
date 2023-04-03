@@ -26,9 +26,10 @@ public class BuildingPlacer : MonoBehaviour
         );
         SpawnBuilding(
             GameManager.instance.gameGlobalParameters.initialBuilding,
-            0,
-            Vector3.zero
+            1 - GameManager.instance.gamePlayersParameters.myPlayerId,
+            GameManager.instance.startPosition + new Vector3(-15f, 0f, 0f)
         );
+      
     }
     public void SpawnBuilding(BuildingData data, int owner, Vector3 position)
     {

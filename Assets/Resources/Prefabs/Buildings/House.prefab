@@ -100,7 +100,7 @@ GameObject:
   - component: {fileID: 780930680259031205}
   - component: {fileID: 8919621411509326860}
   - component: {fileID: -3560476408817607611}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: House
   m_TagString: Unit
   m_Icon: {fileID: 0}

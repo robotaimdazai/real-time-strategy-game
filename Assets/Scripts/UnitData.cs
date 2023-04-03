@@ -16,18 +16,14 @@ public class UnitData : ScriptableObject
         [Header("General Sounds")]
         public AudioClip onSelectSound;
         public InGameResource[] canProduce;
+        public float attackRange;
+        public int attackDamage;
+        public float attackRate;
         
         
         public bool CanBuy()
         {
-            foreach (ResourceValue resource in cost)
-            {
-                if (Globals.GAME_RESOURCES[resource.code].Amount < resource.amount)
-                {
-                    return false;
-                }
-            }
-            return true;
+            return Globals.CanBuy(cost);
         }
     
         

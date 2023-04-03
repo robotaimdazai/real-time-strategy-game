@@ -31,6 +31,9 @@ public class UIManager : MonoBehaviour
     public GameObject sliderPrefab;
     public GameObject togglePrefab;
     public GameObject overlayTint;
+    public GameObject selectedUnitMenuUpgradeButton;
+    public GameObject selectedUnitMenuDestroyButton;
+    
     
     [Header("Placed Building Production")]
     public RectTransform placedBuildingProductionRectTransform;
@@ -48,6 +51,9 @@ public class UIManager : MonoBehaviour
     private TextMeshProUGUI _infoPanelDescriptionText;
     private Transform _infoPanelResourcesCostParent;
     private Dictionary<string, GameParameters> _gameParameters;
+    private List<ResourceValue> _selectedUnitNextLevelCost;
+    private TextMeshProUGUI _selectedUnitDamageText;
+    private TextMeshProUGUI _selectedUnitRangeText;
 
     private void OnEnable()
     {
@@ -132,6 +138,8 @@ public class UIManager : MonoBehaviour
             .Find("Content/ResourcesProduction");
         _selectedUnitActionButtonsParent = selectedUnitMenuTransform
             .Find("SpecificActions");
+        _selectedUnitDamageText = selectedUnitMenuTransform.Find("Content/Damage").GetComponent<TextMeshProUGUI>();
+        _selectedUnitRangeText = selectedUnitMenuTransform.Find("Content/Range").GetComponent<TextMeshProUGUI>();
         
         _ShowSelectedUnitMenu(false);
         gameSettingsPanel.SetActive(false);
@@ -195,6 +203,56 @@ public class UIManager : MonoBehaviour
                 label.text = parameterName;
             availableMenus.Add(parameterName);
             _AddGameSettingsPanelMenuListener(button, parameterName);
+        }
+    }
+    
+    public void ClickLevelUpButton()
+    {
+        _selectedUnit.LevelUp();
+        _SetSelectedUnitMenu(_selectedUnit,!_selectedUnit.LevelMaxedOut);
+        if (_selectedUnit.LevelMaxedOut)
+        {
+            selectedUnitMenuUpgradeButton.transform.Find("Text").GetComponent<Text>().text = "Maxed out";
+            selectedUnitMenuUpgradeButton.GetComponent<Button>().interactable = false;
+            ShowInfoPanel(false);
+        }
+        else
+        {
+            _UpdateSelectedUnitLevelUpInfoPanel();
+            _CheckBuyLimits();
+        }
+    }
+    
+    private void _CheckBuyLimits()
+    {
+        // chek if level up button is disabled or not
+        if (
+            _selectedUnit != null &&
+            _selectedUnit.Owner == GameManager.instance.gamePlayersParameters.myPlayerId &&
+            !_selectedUnit.LevelMaxedOut &&
+            Globals.CanBuy(_selectedUnit.LevelUpData.cost)
+        )
+            selectedUnitMenuUpgradeButton.GetComponent<Button>().interactable = true;
+            
+        // check if building buttons are disabled or not
+        //_OnCheckBuildingButtons();
+        
+        // check if buy/upgrade is affordable: update text colors
+        if (infoPanel.activeSelf)
+        {
+            foreach (Transform resourceDisplay in _infoPanelResourcesCostParent)
+            {
+                InGameResource resourceCode = (InGameResource) System.Enum.Parse(
+                    typeof(InGameResource),
+                    resourceDisplay.Find("Icon").GetComponent<Image>().sprite.name
+                );
+                TextMeshProUGUI txt = resourceDisplay.Find("Text").GetComponent<TextMeshProUGUI>();
+                int resourceAmount = int.Parse(txt.text);
+                if (Globals.GAME_RESOURCES[resourceCode].Amount < resourceAmount)
+                    txt.color = invalidTextColor;
+                else
+                    txt.color = Color.white;
+            }
         }
     }
     
@@ -325,7 +383,28 @@ public class UIManager : MonoBehaviour
     {
         b.onClick.AddListener(() => _buildingPlacer.SelectPlacedBuilding(i));
     }
+    
+    private void _UpdateSelectedUnitLevelUpInfoPanel()
+    {
+        int nextLevel = _selectedUnit.Level + 1;
+        SetInfoPanel("Level up", $"Upgrade unit to level {nextLevel}", _selectedUnit.LevelUpData.cost);
+    }
 
+    
+    public void HoverLevelUpButton()
+    {
+        if (_selectedUnit.LevelMaxedOut) return;
+        _UpdateSelectedUnitLevelUpInfoPanel();
+        ShowInfoPanel(true);
+        _SetSelectedUnitMenu(_selectedUnit, true);
+    }
+
+    public void UnhoverLevelUpButton()
+    {
+        if (_selectedUnit.LevelMaxedOut) return;
+        ShowInfoPanel(false);
+        _SetSelectedUnitMenu(_selectedUnit);
+    }
     private void OnHoverBuildingButton(object data)
     {
         
@@ -405,8 +484,38 @@ public class UIManager : MonoBehaviour
         {
             _SetResourceText(pair.Key, pair.Value.Amount);
         }
+        _CheckBuyLimits();
     }
-    
+
+    public void SetInfoPanel(string title, string description, List<ResourceValue> resourceCosts)
+    {
+        // update texts
+        _infoPanelTitleText.text = title;
+        _infoPanelDescriptionText.text = description;
+        // clear resource costs and reinstantiate new ones
+        foreach (Transform child in _infoPanelResourcesCostParent)
+            Destroy(child.gameObject);
+        if (resourceCosts.Count > 0)
+        {
+            GameObject g;
+            Transform t;
+            foreach (ResourceValue resource in resourceCosts)
+            {
+                g = GameObject.Instantiate(
+                    gameResourceCostPrefab, _infoPanelResourcesCostParent);
+                t = g.transform;
+                t.Find("Text").GetComponent<TextMeshProUGUI>().text = resource.amount.ToString();
+                t.Find("Icon").GetComponent<Image>().sprite = Resources.Load<Sprite>(
+                    $"Textures/GameResources/{resource.code}");
+                // check to see if resource requirement is not
+                // currently met - in that case, turn the text into the "invalid"
+                // color
+                if (Globals.GAME_RESOURCES[resource.code].Amount < resource.amount)
+                    t.Find("Text").GetComponent<TextMeshProUGUI>().color = invalidTextColor;
+            }
+        }
+    }
+
     public void ShowInfoPanel(bool show)
     {
         infoPanel.SetActive(show);
@@ -414,47 +523,28 @@ public class UIManager : MonoBehaviour
    
     public void SetInfoPanel(UnitData data)
     {
-        // update texts
-        if (data.code != "")
-            _infoPanelTitleText.text = data.unitName;
-        if (data.description != "")
-            _infoPanelDescriptionText.text = data.description;
-
-        // clear resource costs and reinstantiate new ones
-        foreach (Transform child in _infoPanelResourcesCostParent)
-            Destroy(child.gameObject);
-
-        if (data.cost.Count > 0)
-        {
-            GameObject g;
-            Transform t;
-            foreach (ResourceValue resource in data.cost)
-            {
-                g = GameObject.Instantiate(gameResourceCostPrefab, _infoPanelResourcesCostParent);
-                t = g.transform;
-                var title = t.Find("Text").GetComponent<TextMeshProUGUI>();
-                title.text = resource.amount.ToString();
-                t.Find("Icon").GetComponent<Image>().sprite = Resources.Load<Sprite>
-                    ($"Textures/GameResources/{resource.code}");
-
-                if (Globals.GAME_RESOURCES[resource.code].Amount<resource.amount)
-                {
-                    title.color = invalidTextColor;
-                }
-
-            }
-        }
+        SetInfoPanel(data.unitName, data.description, data.cost);
     }
-    
-    private void _SetSelectedUnitMenu(Unit unit)
+
+    private void _SetSelectedUnitMenu(Unit unit, bool showUpgrade = false)
     {
+        _selectedUnit = unit;
+        _selectedUnitNextLevelCost = _selectedUnit.GetLevelUpCost();
+
+        bool unitIsMine = unit.Owner == GameManager.instance.gamePlayersParameters.myPlayerId;
+
+        // adapt content panel heights to match info to display
+        int contentHeight = unitIsMine ? 60 + unit.Production.Count * 16 : 60;
+        _selectedUnitContentRectTransform.sizeDelta = new Vector2(64, contentHeight);
+        //_selectedUnitButtonsRectTransform.anchoredPosition = new Vector2(0, -contentHeight - 20);
+        //_selectedUnitButtonsRectTransform.sizeDelta = new Vector2(70, Screen.height - contentHeight - 20);
         // update texts
         _selectedUnitTitleText.text = unit.Data.unitName;
         _selectedUnitLevelText.text = $"Level {unit.Level}";
         // clear resource production and reinstantiate new one
         foreach (Transform child in _selectedUnitResourcesProductionParent)
             Destroy(child.gameObject);
-        if (unit.Production.Count > 0)
+        if (unitIsMine && unit.Production.Count > 0)
         {
             GameObject g; Transform t;
             foreach (var resource in unit.Production)
@@ -462,11 +552,25 @@ public class UIManager : MonoBehaviour
                 g = Instantiate(
                     gameResourceCostPrefab, _selectedUnitResourcesProductionParent);
                 t = g.transform;
-                t.Find("Text").GetComponent<TextMeshProUGUI>().text = $"+{resource.Value}";
+                t.Find("Text").GetComponent<TextMeshProUGUI>().text = showUpgrade ?
+                    $"<color=#00ff00>+{_selectedUnit.LevelUpData.newProduction[resource.Key]}</color>"
+                    : $"+{resource.Value}";
                 t.Find("Icon").GetComponent<Image>().sprite = Resources.Load<Sprite>($"Textures/GameResources/{resource.Key}");
             }
         }
-        
+
+        if (unitIsMine)
+        {
+            _selectedUnitDamageText.text = showUpgrade?
+                $"Damage: <color=#00ff00>{_selectedUnit.LevelUpData.newAttackDamage}</color>"
+                : $"Damage: {unit.AttackDamage}";
+            
+            
+            _selectedUnitRangeText.text = showUpgrade?
+                $"Range: <color=#00ff00>{(int) _selectedUnit.LevelUpData.newAttackRange}</color>"
+                : $"Range: {(int) unit.AttackRange}";
+        }
+
         _selectedUnit = unit;
         // ...
         // clear skills and reinstantiate new ones
@@ -487,6 +591,8 @@ public class UIManager : MonoBehaviour
                 _AddUnitSkillButtonListener(b, i);
             }
         }
+        if (unitIsMine)
+            selectedUnitMenuUpgradeButton.GetComponent<Button>().interactable = Globals.CanBuy(_selectedUnit.LevelUpData.cost);
     }
     
     private void _ShowSelectedUnitMenu(bool show)

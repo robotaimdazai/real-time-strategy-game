@@ -18,7 +18,26 @@ public class BuildingBT : Tree
     {
         Node _root;
 
-        _root = new Sequence(new List<Node>()
+        _root = new Parallel();
+        if (manager.Unit.Data.attackDamage > 0)
+        {
+            var attackSequence = new Sequence(new List<Node>()
+            {
+                new CheckEnemyInAttackRange(manager),
+                new Timer(
+                    manager.Unit.Data.attackRate,
+                    new List<Node>()
+                    {
+                        new TaskAttack(manager),
+                    }
+                    )
+            });
+            
+            _root.Attach(attackSequence);
+            _root.Attach(new CheckEnemyInFOVRange(manager));
+        }
+
+        _root.Attach( new Sequence(new List<Node>()
         {
             new CheckUnitIsMine(manager),
             new Timer(GameManager.instance.producingRate,
@@ -30,7 +49,7 @@ public class BuildingBT : Tree
                 {
                     EventManager.TriggerEvent("UpdateResourceTexts");
                 })
-        });
+        }));
 
         return _root;
     }
