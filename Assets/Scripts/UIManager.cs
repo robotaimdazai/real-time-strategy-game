@@ -33,6 +33,8 @@ public class UIManager : MonoBehaviour
     public GameObject overlayTint;
     public GameObject selectedUnitMenuUpgradeButton;
     public GameObject selectedUnitMenuDestroyButton;
+    public GameObject inputMappingPrefab;
+    public GameObject inputBindingPrefab;
     
     
     [Header("Placed Building Production")]
@@ -280,6 +282,7 @@ public class UIManager : MonoBehaviour
         float contentWidth = 400f;
         float parameterNameWidth = 200f;
         float fieldHeight = 32f;
+        bool isBindMenu = false;
         foreach (var fieldName in parameters.FieldsToShowInGame)
         {
             gWrapper = Instantiate(gameSettingsParameterPrefab, gameSettingsContentParent);
@@ -321,6 +324,22 @@ public class UIManager : MonoBehaviour
                     }
                 }
             }
+            else if (field.FieldType.IsArray && field.FieldType.GetElementType() == typeof(InputBinding))
+            {
+                gEditor = Instantiate(inputMappingPrefab);
+                InputBinding[] bindings = (InputBinding[])field.GetValue(parameters);
+                for (int b = 0; b < bindings.Length; b++)
+                {
+                    GameObject g = Instantiate(
+                        inputBindingPrefab, gEditor.transform);
+                    g.transform.GetComponent<TextMeshProUGUI>().text = bindings[b].displayName;
+                    g.transform.Find("Key/Text").GetComponent<TextMeshProUGUI>().text = bindings[b].key;
+                    _AddInputBindingButtonListener(
+                        g.transform.Find("Key").GetComponent<Button>(),gEditor.transform ,(GameInputParameters) parameters,b);
+                }
+                
+                isBindMenu = true;
+            }
             
             rtWrapper = gWrapper.GetComponent<RectTransform>();
             rtWrapper.anchoredPosition = new Vector2(0f, -i * fieldHeight);
@@ -329,8 +348,13 @@ public class UIManager : MonoBehaviour
             if (gEditor != null)
             {
                 gEditor.transform.SetParent(gWrapper.transform);
+                
                 rtEditor = gEditor.GetComponent<RectTransform>();
-                rtEditor.anchoredPosition = new Vector2((parameterNameWidth + 16f), 0f);
+                if(isBindMenu)
+                    rtEditor.anchoredPosition = new Vector2(0f, 0f);
+                else
+                    rtEditor.anchoredPosition = new Vector2((parameterNameWidth + 16f), 0f);
+                
                 rtEditor.sizeDelta = new Vector2(rtWrapper.sizeDelta.x - (parameterNameWidth + 16f), fieldHeight);
             }
 
@@ -341,6 +365,37 @@ public class UIManager : MonoBehaviour
         Vector2 size = rt.sizeDelta;
         size.y = i * fieldHeight;
         rt.sizeDelta = size;
+    }
+    
+    private void _AddInputBindingButtonListener(Button b, Transform inputBindingsParent, GameInputParameters inputParams, int bindingIndex)
+    {
+        b.onClick.AddListener(() =>
+        {
+            var keyText = b.transform.Find("Text").GetComponent<TextMeshProUGUI>();
+            StartCoroutine(_WaitingForInputBinding(inputParams,inputBindingsParent, bindingIndex, keyText));
+        });
+    }
+    
+    private IEnumerator _WaitingForInputBinding(GameInputParameters inputParams,  Transform inputBindingsParent,int bindingIndex, TextMeshProUGUI keyText)
+    {
+        keyText.text = "<?>";
+
+        GameManager.instance.waitingForInput = true;
+        GameManager.instance.pressedKey = string.Empty;
+        
+        yield return new WaitUntil(() => !GameManager.instance.waitingForInput);
+
+        string key = GameManager.instance.pressedKey;
+        (int prevBindingIndex, InputBinding prevBinding) =
+            GameManager.instance.gameInputParameters.GetBindingForKey(key);
+        if (prevBinding != null)
+        {
+            prevBinding.key = string.Empty;
+            inputBindingsParent.GetChild(prevBindingIndex).Find("Key/Text").GetComponent<TextMeshProUGUI>().text = string.Empty;
+        }
+
+        inputParams.bindings[bindingIndex].key = key;
+        keyText.text = key;
     }
 
     private void _OnGameSettingsToggleValueChanged(GameParameters parameters, FieldInfo field, string gameParameter, Toggle change)

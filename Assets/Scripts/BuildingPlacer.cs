@@ -11,6 +11,15 @@ public class BuildingPlacer : MonoBehaviour
     private RaycastHit _raycastHit;
     private Vector3 _lastPlacementPosition;
 
+    private void OnEnable()
+    {
+        EventManager.AddListener("<Input>Build", _OnBuildInput);
+    }
+
+    private void OnDisable()
+    {
+        EventManager.RemoveListener("<Input>Build", _OnBuildInput);
+    }
     private void Start()
     {
         SpawnBuilding(
@@ -31,6 +40,20 @@ public class BuildingPlacer : MonoBehaviour
         );
       
     }
+    
+    private void _OnBuildInput(object data)
+    {
+        string buildingCode = (string)data;
+        for (int i = 0; i < Globals.BUILDING_DATA.Length; i++)
+        {
+            if (Globals.BUILDING_DATA[i].code == buildingCode)
+            {
+                SelectPlacedBuilding(i);
+                return;
+            }
+        }
+    }
+    
     public void SpawnBuilding(BuildingData data, int owner, Vector3 position)
     {
         SpawnBuilding(data, owner, position, new List<ResourceValue>() { });

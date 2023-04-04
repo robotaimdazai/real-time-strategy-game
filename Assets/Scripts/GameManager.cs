@@ -10,10 +10,15 @@ public class GameManager : MonoBehaviour
     public Vector3 startPosition;
     public GameGlobalParameters gameGlobalParameters;
     public GamePlayersParameters gamePlayersParameters;
+    public GameInputParameters gameInputParameters;
     public GameObject fov;
     
     [HideInInspector]
     public bool gameIsPaused;
+    [HideInInspector]
+    public bool waitingForInput;
+    [HideInInspector]
+    public string pressedKey;
     
     public float producingRate = 3f;
     
@@ -49,7 +54,24 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        if (gameIsPaused) return;
+
+        if (Input.anyKeyDown)
+        {
+            if (waitingForInput)
+            {
+                if (Input.GetMouseButtonDown(0))
+                    pressedKey = "mouse 0";
+                else if (Input.GetMouseButtonDown(1))
+                    pressedKey = "mouse 1";
+                else if (Input.GetMouseButtonDown(2))
+                    pressedKey = "mouse 2";
+                else
+                    pressedKey = Input.inputString;
+                waitingForInput = false;
+            }
+            else
+                gameInputParameters.CheckForInput();
+        }
     }
     
     private void _OnUpdateDayAndNightCycle(object data)
