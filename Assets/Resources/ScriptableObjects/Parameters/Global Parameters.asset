@@ -12,9 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: abcf72084a80f924eb7f30ef79a95abb, type: 3}
   m_Name: Global Parameters
   m_EditorClassIdentifier: 
-  _fieldsToShowInGame:
+  _fieldsToSerialize:
   - enableDayAndNightCycle
+  - dayLengthInSeconds
+  _fieldsToShowInGame:
   - enableFOV
+  - enableDayAndNightCycle
+  - dayLengthInSeconds
   enableDayAndNightCycle: 1
   dayLengthInSeconds: 20
   dayInitialRatio: 0

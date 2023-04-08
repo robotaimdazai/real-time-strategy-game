@@ -1,8 +1,10 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "Building", menuName = "Scriptable Objects/Unit", order = 1)]
+
 public class UnitData : ScriptableObject
 {
         public string code;
@@ -21,9 +23,9 @@ public class UnitData : ScriptableObject
         public float attackRate;
         
         
-        public bool CanBuy()
+        public bool CanBuy(int owner)
         {
-            return Globals.CanBuy(cost);
+            return Globals.CanBuy(owner, cost);
         }
     
         

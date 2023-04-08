@@ -20,13 +20,18 @@ public class Globals
 
     public static BuildingData[] BUILDING_DATA;
     
-    public static Dictionary<InGameResource, GameResource> GAME_RESOURCES =
-    new Dictionary<InGameResource, GameResource>()
+    public static Dictionary<InGameResource, GameResource>[] GAME_RESOURCES;
+    public static void InitializeGameResources(int nPlayers)
     {
-        { InGameResource.Gold, new GameResource("Gold", 300) },
-        { InGameResource.Wood, new GameResource("Wood", 300) },
-        { InGameResource.Stone, new GameResource("Stone", 300) }
-    };
+        GAME_RESOURCES = new Dictionary<InGameResource, GameResource>[nPlayers];
+        for (int i = 0; i < nPlayers; i++)
+            GAME_RESOURCES[i] = new Dictionary<InGameResource, GameResource>()
+            {
+                { InGameResource.Gold, new GameResource("Gold", 1000) },
+                { InGameResource.Wood, new GameResource("Wood", 1000) },
+                { InGameResource.Stone, new GameResource("Stone", 1000) }
+            };
+    }
     
     public static Dictionary<InGameResource, int> XP_CONVERSION_TO_RESOURCE = new Dictionary<InGameResource, int>()
     {
@@ -71,8 +76,12 @@ public class Globals
     
     public static bool CanBuy(List<ResourceValue> cost)
     {
+        return CanBuy(GameManager.instance.gamePlayersParameters.myPlayerId, cost);
+    }
+    public static bool CanBuy(int playerId, List<ResourceValue> cost)
+    {
         foreach (ResourceValue resource in cost)
-            if (GAME_RESOURCES[resource.code].Amount < resource.amount)
+            if (GAME_RESOURCES[playerId][resource.code].Amount < resource.amount)
                 return false;
         return true;
     }

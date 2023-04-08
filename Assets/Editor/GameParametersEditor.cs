@@ -50,17 +50,28 @@ public class GameParametersEditor : Editor
                 continue;
             
             EditorGUILayout.BeginHorizontal();
-            EditorGUILayout.BeginVertical(GUILayout.Width(20f));
+            EditorGUILayout.BeginVertical(GUILayout.Width(40f));
+            
+            //check for header attribute
             bool hasHeader = System.Attribute.IsDefined(field, typeof(HeaderAttribute), false);
             if (hasHeader)
                 GUILayout.FlexibleSpace();
-            
+                
+            EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button(parameters.ShowsField(field.Name) ? "-" : "+", GUILayout.Width(20f)))
             {
                 parameters.ToggleShowField(field.Name);
                 EditorUtility.SetDirty(parameters);
                 AssetDatabase.SaveAssets();
             }
+            if (GUILayout.Button(parameters.SerializesField(field.Name) ? "-" : "+", GUILayout.Width(20f)))
+            {
+                parameters.ToggleSerializeField(field.Name);
+                EditorUtility.SetDirty(parameters);
+                AssetDatabase.SaveAssets();
+            }
+            EditorGUILayout.EndHorizontal();
+            
             EditorGUILayout.EndVertical();
             GUILayout.Space(16);
             EditorGUILayout.PropertyField(serializedObject.FindProperty(field.Name), true);

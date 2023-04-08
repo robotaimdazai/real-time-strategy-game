@@ -28,10 +28,12 @@ public class GameManager : MonoBehaviour
     {
         DataHandler.LoadGameData();
         instance = this;
+        Globals.InitializeGameResources(gamePlayersParameters.players.Length);
         GetComponent<DayNightCycler>().enabled = gameGlobalParameters.enableDayAndNightCycle;
         _GetStartPosition();
         gameIsPaused = false;
         fov.SetActive(gameGlobalParameters.enableFOV);
+        
     }
     
     private void OnEnable()
@@ -108,6 +110,7 @@ public class GameManager : MonoBehaviour
 #if !UNITY_EDITOR
         DataHandler.SaveGameData();
 #endif
+        
     }
 
 }
