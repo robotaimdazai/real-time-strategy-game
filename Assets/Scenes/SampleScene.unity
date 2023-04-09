@@ -2650,6 +2650,7 @@ GameObject:
   - component: {fileID: 853173696}
   - component: {fileID: 853173698}
   - component: {fileID: 853173701}
+  - component: {fileID: 853173702}
   m_Layer: 0
   m_Name: GAME
   m_TagString: Untagged
@@ -2764,6 +2765,8 @@ MonoBehaviour:
   gameInputParameters: {fileID: 11400000, guid: f4a9859b9f5635a418e2d3cd9c851dd9, type: 2}
   fov: {fileID: 1183228691}
   gameIsPaused: 0
+  waitingForInput: 0
+  pressedKey: 
   producingRate: 3
 --- !u!114 &853173698
 MonoBehaviour:
@@ -2988,6 +2991,18 @@ MonoBehaviour:
   paused: {fileID: 3281206170881274497, guid: f6952c5e2db5c4627acbfed417008fa3, type: 2}
   unpaused: {fileID: -798498336615849425, guid: f6952c5e2db5c4627acbfed417008fa3, type: 2}
   masterMixer: {fileID: 24100000, guid: f6952c5e2db5c4627acbfed417008fa3, type: 2}
+--- !u!114 &853173702
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 853173691}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0bec47739776fe40a82412efa244106, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &867694402
 GameObject:
   m_ObjectHideFlags: 0
