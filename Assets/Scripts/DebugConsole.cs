@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class DebugConsole : MonoBehaviour
 {
@@ -47,13 +48,39 @@ public class DebugConsole : MonoBehaviour
         {
             _displayType = DisplayType.Help;
         });
+        
+        new DebugCommand<string, int>(
+            "spawn_units",
+            "Instantiates multiple instances of a character unit (by reference code), using a Poisson disc sampling for random positioning.",
+            "spawn_units <code> <amount>", (code, amount) =>
+            {
+                CharacterData d = Globals.CHARACTER_DATA[code];
+                int owner = GameManager.instance.gamePlayersParameters.myPlayerId;
+                List<Vector3> positions = Utils.SamplePositions(
+                    amount, 1.5f, Vector2.one * 15,
+                    Utils.MiddleOfScreenPointToWorld());
+                foreach (Vector3 pos in positions)
+                {
+                    Character c = new Character(d, owner);
+                    c.ComputeProduction();
+                    c.Transform.GetComponent<NavMeshAgent>().Warp(pos);
+                    c.Transform.GetComponent<UnitManager>().EnableFOV();
+                }
+            });
+        
+        new DebugCommand<int>(
+            "set_unit_formation_type",
+            "Sets the unit formation type (by index).",
+            "set_unit_formation_type <formation_index>", (x) =>
+            {
+                Globals.UNIT_FORMATION_TYPE = (UnitFormationType)x;
+            });
     }
-
+    
     private void _OnShowDebugConsole()
     {
         _showConsole = true;
     }
-
     private void OnGUI()
     {
         if (_showConsole)
@@ -64,7 +91,8 @@ public class DebugConsole : MonoBehaviour
             //input 
             GUI.SetNextControlName(_consolInputName);
             string newInput = GUI.TextField(new Rect(0, 0, Screen.width, 24), _consoleInput);
-            GUI.FocusControl(_consolInputName);
+            //TODO fix focus bug
+            //GUI.FocusControl(_consolInputName);
             //log area
             float y = 24;
             GUI.Box(new Rect(0, y, Screen.width, Screen.height - 24), "");
@@ -84,10 +112,13 @@ public class DebugConsole : MonoBehaviour
                 if (e.keyCode == KeyCode.Return && _consoleInput.Length > 0)
                     _OnReturn();
                 else if (e.keyCode == KeyCode.Escape)
+                {
                     _showConsole = false;
-                else if (e.keyCode == KeyCode.Tab)
+                }
+                else if (e.keyCode == KeyCode.Tab && !string.IsNullOrWhiteSpace(newInput))
                     _displayType = DisplayType.Autocomplete;
             }
+            
         }
     }
 
@@ -148,6 +179,17 @@ public class DebugConsole : MonoBehaviour
                     int i;
                     if (int.TryParse(inputParts[1], out i))
                         dcInt.Invoke(i);
+                }
+                if (command is DebugCommand<string, int> dcStringInt)
+                {
+                    int i;
+                    if (int.TryParse(inputParts[2], out i))
+                        dcStringInt.Invoke(inputParts[1], i);
+                    else
+                    {
+                        Debug.LogError($"'{command.Id}' requires a string and an int parameter!");
+                        return;
+                    }
                 }
             }
         }

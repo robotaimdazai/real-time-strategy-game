@@ -14,6 +14,12 @@ public class CheckHasTarget : Node
             return _state;
         }
         
+        object currentTargetOffset = Parent.GetData("currentTargetOffset");
+        if (currentTargetOffset == null)
+        {
+            _state = NodeState.FAILURE;
+            return _state;
+        }
         if (!((Transform) currentTarget))
         {
             Parent.ClearData("currentTarget");

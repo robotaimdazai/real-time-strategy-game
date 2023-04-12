@@ -10,6 +10,14 @@ public enum InGameResource
     Wood,
     Stone
 }
+public enum UnitFormationType
+{
+    None,
+    Line,
+    Grid,
+    Cross
+}
+
 public class Globals
 {
     public static int TERRAIN_LAYER_MASK = 1 << 6;
@@ -21,6 +29,10 @@ public class Globals
     public static BuildingData[] BUILDING_DATA;
     
     public static Dictionary<InGameResource, GameResource>[] GAME_RESOURCES;
+    public static Dictionary<string, CharacterData> CHARACTER_DATA =
+        new Dictionary<string, CharacterData>();
+    
+    public static UnitFormationType UNIT_FORMATION_TYPE = UnitFormationType.None;
     public static void InitializeGameResources(int nPlayers)
     {
         GAME_RESOURCES = new Dictionary<InGameResource, GameResource>[nPlayers];

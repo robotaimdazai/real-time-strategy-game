@@ -13,6 +13,10 @@ public static class DataHandler
         GameParameters[] gameParametersList = Resources.LoadAll<GameParameters>("ScriptableObjects/Parameters");
         foreach (GameParameters parameters in gameParametersList)
             parameters.LoadFromFile();
+        
+        CharacterData[] characterData = Resources.LoadAll<CharacterData>("ScriptableObjects/Units/Characters") as CharacterData[];
+        foreach (CharacterData d in characterData)
+            Globals.CHARACTER_DATA[d.code] = d;
     }
 
     public static void SaveGameData()

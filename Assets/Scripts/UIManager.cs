@@ -169,6 +169,13 @@ public class UIManager : MonoBehaviour
         _CheckBuyLimits();
     }
 
+    public void SetUnitFormation(int index)
+    {
+        UnitFormationType formationType = (UnitFormationType)index;
+        Globals.UNIT_FORMATION_TYPE = formationType;
+        Debug.Log(formationType + " selected");
+    }
+
     private void _OnPlaceBuildingOn()
     {
         placedBuildingProductionRectTransform.gameObject.SetActive(true);
@@ -229,7 +236,7 @@ public class UIManager : MonoBehaviour
         _SetSelectedUnitMenu(_selectedUnit,!_selectedUnit.LevelMaxedOut);
         if (_selectedUnit.LevelMaxedOut)
         {
-            selectedUnitMenuUpgradeButton.transform.Find("Text").GetComponent<Text>().text = "Maxed out";
+            selectedUnitMenuUpgradeButton.transform.Find("Text").GetComponent<TextMeshProUGUI>().text = "Maxed out";
             selectedUnitMenuUpgradeButton.GetComponent<Button>().interactable = false;
             ShowInfoPanel(false);
         }

@@ -10,18 +10,19 @@ public class UnitManager : MonoBehaviour
     public GameObject fov;
     public AudioSource contextualSource;
     public int ownerMaterialSlotIndex = 0;
-    
-    protected BoxCollider _collider;
+    public int SelectIndex { get => _selectIndex; }
+    public bool IsSelected { get => _selected; }
     public virtual Unit Unit { get; set; }
     
+    protected BoxCollider _collider;
     private Transform _canvas;
     private GameObject _healthbar;
     private bool _selected = false;
     private GameObject _levelUpVFX;
     private Material _levelUpVFXMaterial;
     private Coroutine _levelUpVFXCoroutine = null;
-    public bool IsSelected { get => _selected; }
-    
+    private int _selectIndex = -1;
+   
 
     private void Awake()
     {
@@ -146,7 +147,8 @@ public class UnitManager : MonoBehaviour
     
     public void EnableFOV()
     {
-        fov.SetActive(true);
+        //fov.SetActive(true);
+        EnableFOV(2);
     }
     private IEnumerator _ScalingFOV(float size)
     {
@@ -213,6 +215,7 @@ public class UnitManager : MonoBehaviour
         EventManager.TriggerEvent("SelectUnit", Unit);
         contextualSource.PlayOneShot(Unit.Data.onSelectSound);
         _selected = true;
+        _selectIndex = Globals.SELECTED_UNITS.Count - 1;
     }
     
     public void Select()
