@@ -106,4 +106,5 @@ public class CharacterBT : Tree
 
         return _root;
     }
+    
 }
