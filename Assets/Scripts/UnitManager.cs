@@ -216,6 +216,7 @@ public class UnitManager : MonoBehaviour
         contextualSource.PlayOneShot(Unit.Data.onSelectSound);
         _selected = true;
         _selectIndex = Globals.SELECTED_UNITS.Count - 1;
+        Debug.Log("selected:" + gameObject.name + _selectIndex);
     }
     
     public void Select()
@@ -232,5 +233,6 @@ public class UnitManager : MonoBehaviour
         _healthbar = null;
         EventManager.TriggerEvent("DeselectUnit", Unit);
         _selected = false;
+        _selectIndex = -1;
     }
 }
