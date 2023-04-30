@@ -75,19 +75,15 @@ public class BehaviourTreeWindow : EditorWindow
             _draggableRect.position += Event.current.delta;
         }
         GUI.DrawTexture(_gridRect, _texture);
-        if (canDrawTree)
+        if (canDrawTree && Application.isPlaying)
         {
             var size = new Vector2(200 *  _zoomLevel, 50*_zoomLevel);;
             var rootPos = _draggableRect.center;
             var rootRect = new Rect(rootPos.x, rootPos.y, size.x, size.y);
-            var type = typeof(CharacterBT);
-            GUI.Box(rootRect,type.Name,GUI.skin.button);
-            if (Application.isPlaying)
-            {
-                var charBT = _tree as CharacterBT;
-                var levelPos = rootRect.position + new Vector2(0, rootRect.height);
-                DrawChildren(charBT.Root, levelPos, size);
-            }
+            GUI.Box(rootRect,_tree.Root.GetType().Name,GUI.skin.button);
+            var charBT = _tree as CharacterBT;
+            var levelPos = rootRect.position + new Vector2(0, rootRect.height);
+            DrawChildren(charBT.Root, levelPos, size);
         }
         
         // zoom code
@@ -101,26 +97,25 @@ public class BehaviourTreeWindow : EditorWindow
 
     private void DrawChildren(Node node,Vector2 levelPos, Vector2 size)
     {
+        if (node.Children.Count <= 0) return;
         for (int i = 0; i < node.Children.Count; i++)
         {
             var thisNode = node.Children[i];
             Vector2 thisPos = levelPos;
-            if (i>0)
+            if (i % 2 != 0)
             {
-                if (i % 2 != 0)
-                {
-                    thisPos = new Vector2(thisPos.x +size.x *i, thisPos.y );
-                }
-                else
-                {
-                    thisPos = new Vector2(thisPos.x - size.x *i, thisPos.y );
-                }
+                thisPos = new Vector2(thisPos.x +size.x *i, thisPos.y );
             }
-                    
+            else
+            {
+                thisPos = new Vector2(thisPos.x - size.x *i, thisPos.y );
+            }
+            
             var childRect = new Rect(thisPos.x, thisPos.y, size.x, size.y);
             var childType = thisNode.GetType();
             GUI.Box(childRect,childType.Name,GUI.skin.button);
-            //DrawChildren(thisNode,levelPos,size);
+            var newLevel = childRect.position + new Vector2(size.x, size.y);
+            DrawChildren(thisNode,newLevel,size);
         }
     }
 
@@ -129,4 +124,5 @@ public class BehaviourTreeWindow : EditorWindow
         _gridRect = new Rect(0, 0, _texture.width * _zoomLevel, _texture.height * _zoomLevel);
         _draggableRect = new Rect(0, 0, _texture.width * _zoomLevel, _texture.height * _zoomLevel);
     }
+    
 }
